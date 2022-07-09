@@ -1,7 +1,7 @@
 import * as React from "react";
-import { checkKnobTarget } from "~/helper/check-knob-target";
-import type { Position, KnobShape } from "~/helper/helper";
-import { drawKnobs } from "~/helper/helper";
+import { checkKnobTarget } from "~/utils/check-knob-target";
+import type { Position, KnobShape } from "~/utils/canvas/types";
+import { draw } from "~/utils/canvas/helper";
 import { useCanvas } from "~/hooks/useCanvas";
 
 export default function PedalRoute() {
@@ -37,7 +37,7 @@ export default function PedalRoute() {
 
   React.useEffect(() => {
     if (knobs && canvasRef.current && context) {
-      drawKnobs(knobs, canvasRef.current, context, selectedKnob?.id);
+      draw(knobs, canvasRef.current, context, selectedKnob?.id);
     }
   }, [knobs, context]);
 
@@ -97,7 +97,7 @@ export default function PedalRoute() {
         dragTarget.current.degree = degree;
       }
       if (knobs && context)
-        drawKnobs(knobs, canvasRef.current, context, selectedKnob?.id);
+        draw(knobs, canvasRef.current, context, selectedKnob?.id);
     }
   };
 
@@ -169,10 +169,11 @@ export default function PedalRoute() {
 
       <div className="flex justify-center">
         <canvas
+          className="rounded-xl"
           height={600}
           width={600}
           style={{
-            backgroundColor: "lightgray",
+            backgroundColor: "#040013",
             height: 600,
             width: 600,
             aspectRatio: "auto 1200 / 1200",

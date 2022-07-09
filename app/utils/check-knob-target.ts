@@ -1,4 +1,4 @@
-import type { KnobShape, Position } from "./helper";
+import type { KnobShape, Position } from "./canvas/types";
 
 type CheckKnobTargetParams = {
   position: Position;
