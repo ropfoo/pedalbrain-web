@@ -1,10 +1,12 @@
 import * as React from "react";
 import { checkKnobTarget } from "~/helper/check-knob-target";
-import { drawKnobs, KnobShape, Position } from "~/helper/helper";
+import type { Position, KnobShape } from "~/helper/helper";
+import { drawKnobs } from "~/helper/helper";
+import { useCanvas } from "~/hooks/useCanvas";
 
 export default function PedalRoute() {
-  const canvas = React.useRef<HTMLCanvasElement>(null);
-  const [ctx, setCtx] = React.useState<CanvasRenderingContext2D | null>(null);
+  const { canvasRef, context } = useCanvas();
+
   const [knobs, setKnobs] = React.useState<KnobShape[]>([
     {
       id: "a",
@@ -12,7 +14,6 @@ export default function PedalRoute() {
       rotateElement: { x: 150, y: 170, w: 100, h: 100 },
       degree: 0,
       name: "Gain",
-      isSelected: false,
     },
 
     {
@@ -21,59 +22,47 @@ export default function PedalRoute() {
       rotateElement: { x: 50, y: 70, w: 100, h: 100 },
       degree: 0,
       name: "Bass",
-      isSelected: false,
     },
   ]);
 
   const isMouseDown = React.useRef(false);
   const isRotationMode = React.useRef(false);
 
-  let dragTarget: KnobShape | null = null;
-  //   const [selectedKnob, setSelectedKnob] = React.useState<KnobShape | null>(
-  //     null
-  //   );
-  const selectedKnob = React.useRef<KnobShape | null>(null);
+  const dragTarget = React.useRef<KnobShape | null>(null);
+
+  const [selectedKnob, setSelectedKnob] = React.useState<KnobShape | null>(
+    null
+  );
   const startPos = React.useRef<Position>({ x: 0, y: 0 });
 
-  // initialize the canvas context
   React.useEffect(() => {
-    // dynamically assign the width and height to canvas
-    const canvasEle = canvas.current;
-    if (canvasEle) {
-      canvasEle.width = canvasEle.clientWidth;
-      canvasEle.height = canvasEle.clientHeight;
-
-      // get context of the canvas
-      setCtx(canvasEle.getContext("2d"));
+    if (knobs && canvasRef.current && context) {
+      drawKnobs(knobs, canvasRef.current, context, selectedKnob?.id);
     }
-  }, []);
-
-  React.useEffect(() => {
-    if (knobs && canvas.current && ctx) {
-      drawKnobs(knobs, canvas.current, ctx);
-    }
-  }, [knobs, ctx]);
+  }, [knobs, context]);
 
   const handleMouseDown = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
-    if (canvas.current) {
+    if (canvasRef.current) {
       startPos.current = {
-        x: Number(e.nativeEvent.offsetX - canvas.current.clientLeft),
-        y: Number(e.nativeEvent.offsetY - canvas.current.clientTop),
+        x: Number(e.nativeEvent.offsetX - canvasRef.current.clientLeft),
+        y: Number(e.nativeEvent.offsetY - canvasRef.current.clientTop),
       };
 
       const { newDragTarget, isTarget, newIsRotate } = checkKnobTarget({
         position: startPos.current,
         knobShapes: knobs,
         onSelect: (knob) => {
-          selectedKnob.current = knob;
+          //   selectedKnob.current = knob;
+          setSelectedKnob(knob);
         },
+        onDeselect: () => setSelectedKnob(null),
       });
 
       isMouseDown.current = isTarget;
       isRotationMode.current = newIsRotate;
-      dragTarget = newDragTarget;
+      dragTarget.current = newDragTarget;
     }
   };
 
@@ -82,9 +71,13 @@ export default function PedalRoute() {
   ) => {
     if (!isMouseDown) return;
 
-    if (canvas.current) {
-      const mouseX = Number(e.nativeEvent.offsetX - canvas.current.clientLeft);
-      const mouseY = Number(e.nativeEvent.offsetY - canvas.current.clientTop);
+    if (canvasRef.current) {
+      const mouseX = Number(
+        e.nativeEvent.offsetX - canvasRef.current.clientLeft
+      );
+      const mouseY = Number(
+        e.nativeEvent.offsetY - canvasRef.current.clientTop
+      );
       const dx = mouseX - startPos.current.x;
       const dy = mouseY - startPos.current.y;
 
@@ -93,29 +86,30 @@ export default function PedalRoute() {
         y: mouseY,
       };
 
-      if (!isRotationMode.current && dragTarget) {
-        dragTarget.dragElement.x += dx;
-        dragTarget.dragElement.y += dy;
-        dragTarget.rotateElement.x += dx;
-        dragTarget.rotateElement.y += dy;
-      } else if (isRotationMode.current && dragTarget) {
+      if (!isRotationMode.current && dragTarget.current) {
+        dragTarget.current.dragElement.x += dx;
+        dragTarget.current.dragElement.y += dy;
+        dragTarget.current.rotateElement.x += dx;
+        dragTarget.current.rotateElement.y += dy;
+      } else if (isRotationMode.current && dragTarget.current) {
         const radians = Math.atan2(mouseX - dx, mouseY - dy);
         const degree = radians * (180 / Math.PI) * -1 + 90;
-        dragTarget.degree = degree;
+        dragTarget.current.degree = degree;
       }
-      if (knobs && ctx) drawKnobs(knobs, canvas.current, ctx);
+      if (knobs && context)
+        drawKnobs(knobs, canvasRef.current, context, selectedKnob?.id);
     }
   };
 
   const handleMouseUp = () => {
     setKnobs((knbs) =>
       knbs.map((knob) => {
-        if (knob.id === dragTarget?.id) return dragTarget;
+        if (knob.id === dragTarget.current?.id) return dragTarget.current;
         return knob;
       })
     );
 
-    dragTarget = null;
+    dragTarget.current = null;
     isRotationMode.current = false;
     isMouseDown.current = true;
   };
@@ -123,18 +117,18 @@ export default function PedalRoute() {
   const handleMouseOut = () => handleMouseUp();
 
   const storeCanvasAsJpg = () => {
-    if (canvas.current) {
-      const fullQuality = canvas.current.toDataURL("image/jpeg", 1.0);
+    if (canvasRef.current) {
+      const fullQuality = canvasRef.current.toDataURL("image/jpeg", 1.0);
       console.log(fullQuality);
     }
   };
 
   const changeName = (name: string) => {
     console.log(name, dragTarget);
-    if (selectedKnob.current) {
+    if (selectedKnob) {
       setKnobs((knbs) =>
         knbs.map((knob) => {
-          if (knob.id === selectedKnob.current?.id) return { ...knob, name };
+          if (knob.id === selectedKnob?.id) return { ...knob, name };
           return knob;
         })
       );
@@ -147,8 +141,13 @@ export default function PedalRoute() {
       <input
         className="border-2 border-blue-300"
         type="text"
+        // value={selectedKnob?.name}
+        // defaultValue={selectedKnob?.name}
         onChange={(e) => changeName(e.target.value)}
       />
+      <div>
+        {selectedKnob ? <p>{selectedKnob.name}</p> : <p>no selection</p>}
+      </div>
       <button
         onClick={() =>
           setKnobs((knbs) => [
@@ -159,7 +158,6 @@ export default function PedalRoute() {
               rotateElement: { x: 150, y: 170, w: 100, h: 100 },
               degree: 0,
               name: "Test",
-              isSelected: false,
             },
           ])
         }
@@ -169,16 +167,23 @@ export default function PedalRoute() {
 
       <h1>Pedal</h1>
 
-      <canvas
-        height={800}
-        width={800}
-        style={{ backgroundColor: "lightgray" }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseOut={handleMouseOut}
-        ref={canvas}
-      ></canvas>
+      <div className="flex justify-center">
+        <canvas
+          height={600}
+          width={600}
+          style={{
+            backgroundColor: "lightgray",
+            height: 600,
+            width: 600,
+            aspectRatio: "auto 1200 / 1200",
+          }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseOut={handleMouseOut}
+          ref={canvasRef}
+        />
+      </div>
     </div>
   );
 }

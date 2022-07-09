@@ -1,15 +1,17 @@
-import { KnobShape, Position } from "./helper";
+import type { KnobShape, Position } from "./helper";
 
 type CheckKnobTargetParams = {
   position: Position;
   knobShapes: KnobShape[];
   onSelect?: (knob: KnobShape) => void;
+  onDeselect?: () => void;
 };
 
 export function checkKnobTarget({
   position,
   knobShapes,
   onSelect,
+  onDeselect,
 }: CheckKnobTargetParams) {
   const { x, y } = position;
 
@@ -26,7 +28,6 @@ export function checkKnobTarget({
       y <= knobShape.dragElement.y + 50 + knobShape.dragElement.h
     ) {
       newDragTarget = knobShape;
-      newDragTarget.isSelected = true;
 
       newIsRotate = false;
       if (onSelect) onSelect(knobShape);
@@ -42,13 +43,14 @@ export function checkKnobTarget({
       y <= knobShape.rotateElement.y + knobShape.rotateElement.h
     ) {
       newDragTarget = knobShape;
-      newDragTarget.isSelected = true;
       newIsRotate = true;
       if (onSelect) onSelect(knobShape);
 
       isTarget = true;
       break;
     }
+
+    if (onDeselect) onDeselect();
   }
   return { isTarget, newDragTarget, newIsRotate };
 }

@@ -16,30 +16,32 @@ export type KnobShape = {
   rotateElement: Box;
   degree: number;
   name: string;
-  isSelected: boolean;
 };
 
 // draw boxes
 export function drawKnobs(
   knobs: KnobShape[],
   canvas: HTMLCanvasElement,
-  context: CanvasRenderingContext2D
+  context: CanvasRenderingContext2D,
+  selectedId?: string
 ) {
   context.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-  knobs.map((knob) => drawFillRect(knob, context));
+  knobs.map((knob) => drawFillRect(knob, context, selectedId));
 }
 
 // draw rectangle with background
 export function drawFillRect(
   KnobShape: KnobShape,
-  context: CanvasRenderingContext2D
+  context: CanvasRenderingContext2D,
+  selectedId?: string
 ) {
   const { x, y, w, h } = KnobShape.dragElement;
 
   // Border
-  if (KnobShape.isSelected) {
+  if (KnobShape.id === selectedId) {
     context.beginPath();
     context.fillStyle = "green";
+
     context.strokeRect(x - 75, y - 75, w + 50, h + 150);
     context.stroke();
   }
