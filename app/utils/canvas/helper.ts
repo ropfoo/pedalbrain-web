@@ -1,19 +1,28 @@
+import type { EditorPedal } from "~/routes/pedal";
 import { drawKnobShpe } from "./pedal/draw-knob-shape";
 import { drawPedalShape } from "./pedal/draw-pedal-shape";
-import type { Box, KnobShape } from "./types";
+import type { Box } from "./types";
 
-// draw boxes
-export function draw(
-  knobs: KnobShape[],
-  canvas: HTMLCanvasElement,
-  context: CanvasRenderingContext2D,
-  selectedId?: string
-) {
-  context.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-  drawPedalShape(context);
+type DrawPedalParams = {
+  canvas: HTMLCanvasElement;
+  context: CanvasRenderingContext2D;
+  pedal: EditorPedal;
+  selectedId?: string;
+};
 
-  // draw knobs
-  knobs.map((knob) => drawKnobShpe(knob, context, selectedId));
+export function drawPedal({
+  canvas,
+  context,
+  pedal,
+  selectedId,
+}: DrawPedalParams) {
+  if (pedal) {
+    context.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+    drawPedalShape(context, pedal);
+
+    // draw knobs
+    pedal.knobs.map((knob) => drawKnobShpe(knob, context, selectedId));
+  }
 }
 
 function drawTest(context: CanvasRenderingContext2D, { w, h, x, y }: Box) {

@@ -40,6 +40,33 @@ async function seed() {
     },
   });
 
+  await prisma.pedal.create({
+    data: {
+      name: "The Gainer 3",
+      color: "orange2",
+      height: 400,
+      width: 300,
+      knobs: {
+        create: [
+          {
+            name: "Gain",
+            posX: 100,
+            posY: 100,
+            size: 50,
+            rotation: 10,
+          },
+          {
+            name: "Bass",
+            posX: 100,
+            posY: 250,
+            size: 100,
+            rotation: 25,
+          },
+        ],
+      },
+    },
+  });
+
   console.log(`Database has been seeded. 🌱`);
 }
 

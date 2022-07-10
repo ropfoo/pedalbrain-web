@@ -1,50 +1,51 @@
-import type { KnobShape, Position } from "./canvas/types";
+import type { Knob } from "@prisma/client";
+import type { Position } from "./canvas/types";
 
 type CheckKnobTargetParams = {
   position: Position;
-  knobShapes: KnobShape[];
-  onSelect?: (knob: KnobShape) => void;
+  knobs: Knob[];
+  onSelect?: (knob: Knob) => void;
   onDeselect?: () => void;
 };
 
 export function checkKnobTarget({
   position,
-  knobShapes,
+  knobs,
   onSelect,
   onDeselect,
 }: CheckKnobTargetParams) {
   const { x, y } = position;
 
-  let newDragTarget: KnobShape | null = null;
+  let newDragTarget: Knob | null = null;
   let newIsRotate = false;
   let isTarget = false;
 
-  for (let i = 0; i < knobShapes.length; i++) {
-    const knobShape = knobShapes[i];
+  for (let i = 0; i < knobs.length; i++) {
+    const knob = knobs[i];
     if (
-      x >= knobShape.dragElement.x - 50 &&
-      x <= knobShape.dragElement.x - 50 + knobShape.dragElement.w &&
-      y >= knobShape.dragElement.y + 50 &&
-      y <= knobShape.dragElement.y + 50 + knobShape.dragElement.h
+      x >= knob.posX - 50 &&
+      x <= knob.posX - 50 + knob.size &&
+      y >= knob.posY + 50 &&
+      y <= knob.posY + 50 + knob.size
     ) {
-      newDragTarget = knobShape;
+      newDragTarget = knob;
 
       newIsRotate = false;
-      if (onSelect) onSelect(knobShape);
+      if (onSelect) onSelect(knob);
 
       isTarget = true;
       break;
     }
     if (
-      x >= knobShape.rotateElement.x &&
-      x >= knobShape.rotateElement.x &&
-      x <= knobShape.rotateElement.x + knobShape.rotateElement.w &&
-      y >= knobShape.rotateElement.y &&
-      y <= knobShape.rotateElement.y + knobShape.rotateElement.h
+      x >= knob.posX &&
+      x >= knob.posX &&
+      x <= knob.posX + knob.size &&
+      y >= knob.posY &&
+      y <= knob.posY + knob.size
     ) {
-      newDragTarget = knobShape;
+      newDragTarget = knob;
       newIsRotate = true;
-      if (onSelect) onSelect(knobShape);
+      if (onSelect) onSelect(knob);
 
       isTarget = true;
       break;
