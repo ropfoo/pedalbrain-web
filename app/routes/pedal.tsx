@@ -9,6 +9,7 @@ import { json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import type { Knob } from "@prisma/client";
 import { updateKnob } from "~/models/knob.server";
+import { H1 } from "~/components/Text";
 
 export type EditorPedal = Awaited<ReturnType<typeof getPedal>>;
 
@@ -138,7 +139,7 @@ export default function PedalRoute() {
     //   })
     // );
 
-    setSelectedKnob(dragTarget.current);
+    // setSelectedKnob(dragTarget.current);
 
     dragTarget.current = null;
     isRotationMode.current = false;
@@ -146,13 +147,6 @@ export default function PedalRoute() {
   };
 
   const handleMouseOut = () => handleMouseUp();
-
-  const storeCanvasAsJpg = () => {
-    if (canvasRef.current) {
-      const fullQuality = canvasRef.current.toDataURL("image/jpeg", 1.0);
-      console.log(fullQuality);
-    }
-  };
 
   const changeName = (name: string) => {
     console.log(name, dragTarget);
@@ -166,45 +160,43 @@ export default function PedalRoute() {
     }
   };
 
+  if (!pedal) return <p>no pedal</p>;
+
   return (
-    <div className="App">
-      <button onClick={storeCanvasAsJpg}>snap</button>
-      <input
-        className="border-blue-300 border-2"
-        type="text"
-        onChange={(e) => changeName(e.target.value)}
-      />
-      <div>
-        {selectedKnob ? <p>{selectedKnob.name}</p> : <p>no selection</p>}
+    <div className="flex justify-between">
+      <div className="flex flex-col">
+        <H1>{pedal.name}</H1>
+        <div>
+          {selectedKnob ? <p>{selectedKnob.name}</p> : <p>no selection</p>}
+        </div>
+
+        <Form method="post">
+          <input hidden type="text" name="id" value={dragTarget.current?.id} />
+          <input
+            ref={inputPosXRef}
+            hidden
+            type="text"
+            name="posX"
+            value={dragTarget.current?.posX}
+          />
+          <input
+            ref={inputPosYRef}
+            hidden
+            type="text"
+            name="posY"
+            value={dragTarget.current?.posY}
+          />
+          <button type="submit">update knob</button>
+        </Form>
       </div>
 
-      <h1>{pedal?.name}</h1>
-      <Form method="post">
-        <input hidden type="text" name="id" value={dragTarget.current?.id} />
-        <input
-          ref={inputPosXRef}
-          hidden
-          type="text"
-          name="posX"
-          value={dragTarget.current?.posX}
-        />
-        <input
-          ref={inputPosYRef}
-          hidden
-          type="text"
-          name="posY"
-          value={dragTarget.current?.posY}
-        />
-        <button type="submit">update knob</button>
-      </Form>
-
-      <div className="flex justify-center">
+      <div className="flex justify-end">
         <canvas
-          className="rounded-2xl border-4 border-purple bg-black"
+          className="rounded-2xl  bg-darkblue"
           height={600}
           width={600}
           style={{
-            backgroundColor: "lightgray",
+            // backgroundColor: "lightgray",
             height: 600,
             width: 600,
             aspectRatio: "auto 1200 / 1200",

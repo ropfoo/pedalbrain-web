@@ -1,6 +1,7 @@
 import type { Knob } from "@prisma/client";
 import { drawRoundRect } from "../draw-round-rect";
 import type { Box, Position } from "../types";
+import { getDragArea, getRotationArea } from "./knob-areas";
 
 // draw rectangle with background
 export function drawKnobShpe(
@@ -12,23 +13,22 @@ export function drawKnobShpe(
 
   const { x, y, w, h }: Box = { x: posX, y: posY, w: size, h: size };
 
-  // Border
+  //show rotation helper shape
+  //   const rotationArea = getRotationArea(knob);
+  //   drawRotationAreaShape(context, rotationArea);
+
+  // Drag Area
+  const dragArea = getDragArea(knob);
   if (id === selectedId) {
     context.beginPath();
     context.fillStyle = "rgba(255,255,255,0.8)";
     drawRoundRect({
       context,
-      box: { x: x - w * 0.62, y: y - h * 1.1, w: w * 1.25, h: h * 3.25 },
+      box: dragArea,
       radius: 20,
     });
   }
 
-  // Dragger
-  context.beginPath();
-  context.fillStyle = "green";
-  context.fillRect(x - 50, y + 50, w, h);
-
-  // drawTest(context, KnobShape.rotateElement);
   drawCircle(context, { x, y }, size);
   drawPointer(context, { x, y }, rotation, size);
 
@@ -36,7 +36,7 @@ export function drawKnobShpe(
   context.fillStyle = "black";
   context.font = "16px Arial";
   context.textAlign = "center";
-  context.fillText(name, x, y + 70);
+  context.fillText(name, x, y + size / 2 + 20);
 }
 
 function drawCircle(
@@ -65,4 +65,12 @@ function drawPointer(
   ctx.fillStyle = "white";
   ctx.fillRect(x, y, (size / 2) * 0.85, 5);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
+}
+
+function drawRotationAreaShape(
+  context: CanvasRenderingContext2D,
+  { w, h, x, y }: Box
+) {
+  context.fillStyle = "blue";
+  context.fillRect(x, y, w, h);
 }

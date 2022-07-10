@@ -1,7 +1,6 @@
 import type { EditorPedal } from "~/routes/pedal";
 import { drawKnobShpe } from "./pedal/draw-knob-shape";
 import { drawPedalShape } from "./pedal/draw-pedal-shape";
-import type { Box } from "./types";
 
 type DrawPedalParams = {
   canvas: HTMLCanvasElement;
@@ -23,9 +22,4 @@ export function drawPedal({
     // draw knobs
     pedal.knobs.map((knob) => drawKnobShpe(knob, context, selectedId));
   }
-}
-
-function drawTest(context: CanvasRenderingContext2D, { w, h, x, y }: Box) {
-  context.fillStyle = "blue";
-  context.fillRect(x, y, w, h);
 }

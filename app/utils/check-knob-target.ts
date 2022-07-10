@@ -1,5 +1,6 @@
 import type { Knob } from "@prisma/client";
-import type { Position } from "./canvas/types";
+import { getDragArea, getRotationArea } from "./canvas/pedal/knob-areas";
+import type { Box, Position } from "./canvas/types";
 
 type CheckKnobTargetParams = {
   position: Position;
@@ -22,11 +23,15 @@ export function checkKnobTarget({
 
   for (let i = 0; i < knobs.length; i++) {
     const knob = knobs[i];
+
+    const rotationArea = getRotationArea(knob);
+    const dragArea = getDragArea(knob);
+
     if (
-      x >= knob.posX - 50 &&
-      x <= knob.posX - 50 + knob.size &&
-      y >= knob.posY + 50 &&
-      y <= knob.posY + 50 + knob.size
+      x >= dragArea.x &&
+      x <= dragArea.x + dragArea.w &&
+      y >= dragArea.y &&
+      y <= dragArea.y + dragArea.h
     ) {
       newDragTarget = knob;
 
@@ -37,11 +42,11 @@ export function checkKnobTarget({
       break;
     }
     if (
-      x >= knob.posX &&
-      x >= knob.posX &&
-      x <= knob.posX + knob.size &&
-      y >= knob.posY &&
-      y <= knob.posY + knob.size
+      x >= rotationArea.x &&
+      x >= rotationArea.x &&
+      x <= rotationArea.x + rotationArea.w &&
+      y >= rotationArea.y &&
+      y <= rotationArea.y + rotationArea.h
     ) {
       newDragTarget = knob;
       newIsRotate = true;
