@@ -13,6 +13,10 @@ export const loader: LoaderFunction = async () => {
   return json<LoaderData>({ pedals });
 };
 
+export const handle = {
+  breadcrumb: () => <Link to="/pedals">Pedals</Link>,
+};
+
 export default function PedalsRoute() {
   const { pedals } = useLoaderData<LoaderData>();
   return (

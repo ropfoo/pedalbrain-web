@@ -2,10 +2,13 @@ import type { Knob } from "@prisma/client";
 import * as React from "react";
 import { useCanvas } from "~/hooks/useCanvas";
 import type { EditorPedal } from "~/routes/pedals/$id";
-import { drawPedal } from "~/utils/canvas/helper";
+import { drawPedal, resolution } from "~/utils/canvas/helper";
 import type { Position } from "~/utils/canvas/types";
 import { checkKnobTarget } from "~/utils/check-knob-target";
 import KnobOverlay from "./KnobOberlay";
+
+const CANVAS_HEIGHT = 500;
+const CANVAS_WIDTH = 500;
 
 interface PedalCanvasProps {
   pedal: EditorPedal;
@@ -85,7 +88,6 @@ export default function PedalCanvas({ pedal }: PedalCanvasProps) {
       if (!isRotationMode.current && dragTarget.current) {
         dragTarget.current.posX += dx;
         dragTarget.current.posY += dy;
-        console.log(dragTarget.current.posX);
         if (inputPosXRef.current && inputPosYRef.current) {
           inputPosXRef.current.value = dragTarget.current.posX.toString();
           inputPosYRef.current.value = dragTarget.current.posY.toString();
@@ -117,13 +119,15 @@ export default function PedalCanvas({ pedal }: PedalCanvasProps) {
     <div className="relative h-[500px]">
       <canvas
         className="rounded-2xl  bg-darkblue"
-        height={1000}
-        width={1000}
+        height={CANVAS_HEIGHT * resolution}
+        width={CANVAS_WIDTH * resolution}
         style={{
           // backgroundColor: "lightgray",
-          height: 500,
-          width: 500,
-          aspectRatio: "auto 1000 / 1000",
+          height: CANVAS_HEIGHT,
+          width: CANVAS_WIDTH,
+          aspectRatio: `auto ${CANVAS_HEIGHT * resolution} / ${
+            CANVAS_WIDTH * resolution
+          }`,
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -137,7 +141,7 @@ export default function PedalCanvas({ pedal }: PedalCanvasProps) {
           knob={selectedKnob}
           inputPosXRef={inputPosXRef}
           inputPosYRef={inputPosYRef}
-          width={500}
+          width={CANVAS_WIDTH}
         />
       )}
     </div>

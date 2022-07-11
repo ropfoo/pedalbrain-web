@@ -5,7 +5,7 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, Link, RouteMatch, useLoaderData } from "@remix-run/react";
 import { updateKnob } from "~/models/knob.server";
 import { H1 } from "~/components/Text";
 import Input from "~/components/Form/Input";
@@ -56,6 +56,13 @@ export const action: ActionFunction = async ({ request }) => {
     await updateKnob(id, posX, posY);
   }
   return true;
+};
+
+export const handle = {
+  breadcrumb: (match: RouteMatch) => {
+    const { pedal } = match.data as LoaderData;
+    return <Link to={match.pathname}>{pedal?.name}</Link>;
+  },
 };
 
 export default function PedalRoute() {

@@ -45,8 +45,10 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full bg-black text-white">
-        <Navigation />
-        <div className=" px-16 pt-32">
+        <header>
+          <Navigation />
+        </header>
+        <div className="px-16 pt-32">
           <Outlet />
         </div>
         <ScrollRestoration />

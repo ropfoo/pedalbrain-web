@@ -2,7 +2,7 @@ import type { EditorPedal } from "~/routes/pedals/$id";
 import { drawKnobShpe } from "./pedal/draw-knob-shape";
 import { drawPedalShape } from "./pedal/draw-pedal-shape";
 
-export const resolution = 2;
+export const resolution = 3;
 
 type DrawPedalParams = {
   canvas: HTMLCanvasElement;
