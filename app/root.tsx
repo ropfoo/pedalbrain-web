@@ -15,6 +15,7 @@ import {
 
 import tailwindStylesheetUrl from "./styles/tailwind.css";
 import { getUser } from "./session.server";
+import Navigation from "./components/Navigation";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
@@ -22,7 +23,7 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Remix Notes",
+  title: "Pedalbrain",
   viewport: "width=device-width,initial-scale=1",
 });
 
@@ -43,8 +44,11 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="h-full bg-black px-16 pt-24 text-white">
-        <Outlet />
+      <body className="h-full bg-black text-white">
+        <Navigation />
+        <div className=" px-16 pt-32">
+          <Outlet />
+        </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
