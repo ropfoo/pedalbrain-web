@@ -12,6 +12,7 @@ module.exports = {
       blue: "#140063",
       lightblue: "#3A3FBC",
     },
+    fontFamily: { sans: ["Roboto", "sans-serif"] },
   },
   plugins: [],
 };
