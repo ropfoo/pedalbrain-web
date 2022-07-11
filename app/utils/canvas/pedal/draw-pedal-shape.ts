@@ -1,5 +1,6 @@
 import { drawRoundRect } from "../draw-round-rect";
 import type { Pedal } from "@prisma/client";
+import { resolution } from "../helper";
 
 export function drawPedalShape(
   context: CanvasRenderingContext2D,
@@ -7,17 +8,20 @@ export function drawPedalShape(
 ) {
   const { width, height } = pedal;
 
-  const shadowAddition = 50;
+  const resWidth = width * resolution;
+  const resHeight = height * resolution;
 
-  const posX = context.canvas.width / 2 - width / 2;
-  const posY = context.canvas.height / 2 - height / 2 - shadowAddition / 2;
+  const shadowAddition = 50 * resolution;
+
+  const posX = context.canvas.width / 2 - resWidth / 2;
+  const posY = context.canvas.height / 2 - resHeight / 2 - shadowAddition / 2;
 
   // Shadow
   context.beginPath();
   drawRoundRect({
     context,
-    box: { x: posX, y: posY, w: width, h: height + shadowAddition },
-    radius: 40,
+    box: { x: posX, y: posY, w: resWidth, h: resHeight + shadowAddition },
+    radius: 35 * resolution,
   });
   context.fillStyle = "rgba(5, 106, 247, 0.85)";
   context.fill();
@@ -25,8 +29,8 @@ export function drawPedalShape(
   context.beginPath();
   drawRoundRect({
     context,
-    box: { x: posX, y: posY, w: width, h: height },
-    radius: 30,
+    box: { x: posX, y: posY, w: resWidth, h: resHeight },
+    radius: 25 * resolution,
   });
   context.fillStyle = "rgb(5, 106, 247)";
   context.fill();
