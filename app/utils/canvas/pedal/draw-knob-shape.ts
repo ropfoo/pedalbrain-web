@@ -1,15 +1,23 @@
 import type { Knob } from "@prisma/client";
 import { drawRoundRect } from "../draw-round-rect";
-import { resolution } from "../helper";
+// import { resolution } from "../helper";
 import type { Box, Position } from "../types";
 import { getDragArea, getRotationArea } from "./knob-areas";
 
+type DrawKnobShapeParams = {
+  knob: Knob;
+  context: CanvasRenderingContext2D;
+  resolution: number;
+  selectedId?: string;
+};
+
 // draw rectangle with background
-export function drawKnobShpe(
-  knob: Knob,
-  context: CanvasRenderingContext2D,
-  selectedId?: string
-) {
+export function drawKnobShpe({
+  knob,
+  context,
+  resolution,
+  selectedId,
+}: DrawKnobShapeParams) {
   const { posX, posY, name, size, id, rotation } = knob;
 
   const { x, y, w, h }: Box = {
@@ -24,7 +32,7 @@ export function drawKnobShpe(
   //   drawRotationAreaShape(context, rotationArea);
 
   // Drag Area
-  const dragArea = getDragArea(knob);
+  const dragArea = getDragArea({ knob, resolution });
   if (id === selectedId) {
     context.beginPath();
     context.fillStyle = "rgba(255,255,255,0.5)";
@@ -40,7 +48,7 @@ export function drawKnobShpe(
 
   // Text
   context.fillStyle = "black";
-  context.font = `${13 * resolution}px Arial`;
+  context.font = `${13 * resolution}px Roboto`;
   context.textAlign = "center";
   context.fillText(name, x, y + w / 2 + 20 * resolution);
 }

@@ -1,12 +1,20 @@
 import { drawRoundRect } from "../draw-round-rect";
 import type { Pedal } from "@prisma/client";
-import { resolution } from "../helper";
+import type { EditorPedal } from "~/routes/pedals/$id";
+//
+type DrawPedalParams = {
+  context: CanvasRenderingContext2D;
+  pedal: EditorPedal;
+  resolution: number;
+};
 
-export function drawPedalShape(
-  context: CanvasRenderingContext2D,
-  pedal: Pedal
-) {
-  const { width, height } = pedal;
+export function drawPedalShape({
+  context,
+  pedal,
+  resolution,
+}: DrawPedalParams) {
+  const width = pedal?.width ?? 0;
+  const height = pedal?.height ?? 0;
 
   const resWidth = width * resolution;
   const resHeight = height * resolution;

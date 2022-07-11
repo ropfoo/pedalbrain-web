@@ -5,7 +5,7 @@ import logo from "../../public/images/logo.png";
 
 export default function Navigation() {
   return (
-    <nav className="fixed z-50 flex h-16 w-full items-center justify-between bg-darkblue px-16">
+    <nav className=" fixed z-50 flex h-16 w-full items-center  justify-between bg-darkblue px-16">
       <div>
         <NavLink to={"/"}>
           <img className="h-11 w-11" src={logo} alt="" />
@@ -28,7 +28,7 @@ function NavElement({ to }: NavElementProps) {
     <NavLink
       className={({ isActive }) =>
         clsx(
-          "text-lightblue transition-all duration-300 hover:brightness-125",
+          "font-bold text-lightblue transition-all duration-300 hover:brightness-125 ",
           {
             "text-pink": isActive,
           }

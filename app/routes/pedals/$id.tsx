@@ -10,6 +10,7 @@ import { updateKnob } from "~/models/knob.server";
 import { H1 } from "~/components/Text";
 import Input from "~/components/Form/Input";
 import PedalCanvas from "~/components/PedalCanvas/PedalCanvas";
+import PedalPreview from "~/components/PedalCanvas/PedalPreview";
 
 export type EditorPedal = Awaited<ReturnType<typeof getPedal>>;
 
@@ -29,10 +30,12 @@ export const loader: LoaderFunction = async ({ params }) => {
 
   const pedal = await getPedal(params.id);
 
-  return json<LoaderData>({ pedal });
+  return json<LoaderData>({
+    pedal,
+  });
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
 
   if (formData.get("_action") === "updatePedal") {
@@ -84,10 +87,11 @@ export default function PedalRoute() {
             save
           </button>
         </Form>
+        <PedalPreview pedal={pedal} scale={0.4} />
       </div>
 
       <div className="flex justify-end">
-        <PedalCanvas pedal={pedal} />
+        <PedalCanvas hasBackground pedal={pedal} />
       </div>
     </div>
   );

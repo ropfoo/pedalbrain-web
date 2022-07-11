@@ -1,11 +1,11 @@
 import type { Knob } from "@prisma/client";
-import { resolution } from "./canvas/helper";
 import { getDragArea, getRotationArea } from "./canvas/pedal/knob-areas";
 import type { Position } from "./canvas/types";
 
 type CheckKnobTargetParams = {
   position: Position;
   knobs: Knob[];
+  resolution: number;
   onSelect?: (knob: Knob) => void;
   onDeselect?: () => void;
 };
@@ -13,6 +13,7 @@ type CheckKnobTargetParams = {
 export function checkKnobTarget({
   position,
   knobs,
+  resolution,
   onSelect,
   onDeselect,
 }: CheckKnobTargetParams) {
@@ -26,8 +27,8 @@ export function checkKnobTarget({
   for (let i = 0; i < knobs.length; i++) {
     const knob = knobs[i];
 
-    const rotationArea = getRotationArea(knob);
-    const dragArea = getDragArea(knob);
+    const rotationArea = getRotationArea({ knob, resolution });
+    const dragArea = getDragArea({ knob, resolution });
 
     if (
       x >= dragArea.x &&

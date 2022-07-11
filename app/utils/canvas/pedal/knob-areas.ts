@@ -1,8 +1,12 @@
 import type { Knob } from "@prisma/client";
-import { resolution } from "../helper";
 import type { Box } from "../types";
 
-export function getRotationArea(knob: Knob): Box {
+type KnobAreaParam = {
+  knob: Knob;
+  resolution: number;
+};
+
+export function getRotationArea({ knob, resolution }: KnobAreaParam): Box {
   const size = knob.size * resolution;
   return {
     x: knob.posX - size / 2,
@@ -12,7 +16,7 @@ export function getRotationArea(knob: Knob): Box {
   };
 }
 
-export function getDragArea(knob: Knob): Box {
+export function getDragArea({ knob, resolution }: KnobAreaParam): Box {
   const padding = 20;
   const size = knob.size * resolution + padding;
 

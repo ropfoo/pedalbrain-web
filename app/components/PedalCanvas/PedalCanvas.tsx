@@ -1,20 +1,28 @@
 import type { Knob } from "@prisma/client";
+import clsx from "clsx";
 import * as React from "react";
 import { useCanvas } from "~/hooks/useCanvas";
 import type { EditorPedal } from "~/routes/pedals/$id";
-import { drawPedal, resolution } from "~/utils/canvas/helper";
+import { drawPedal } from "~/utils/canvas/helper";
 import type { Position } from "~/utils/canvas/types";
 import { checkKnobTarget } from "~/utils/check-knob-target";
 import KnobOverlay from "./KnobOberlay";
 
-const CANVAS_HEIGHT = 500;
-const CANVAS_WIDTH = 500;
-
 interface PedalCanvasProps {
   pedal: EditorPedal;
+  resolution?: number;
+  width?: number;
+  height?: number;
+  hasBackground?: boolean;
 }
 
-export default function PedalCanvas({ pedal }: PedalCanvasProps) {
+export default function PedalCanvas({
+  pedal,
+  resolution = 2,
+  width = 500,
+  height = 500,
+  hasBackground = false,
+}: PedalCanvasProps) {
   const { canvasRef, context } = useCanvas();
 
   const [selectedKnob, setSelectedKnob] = React.useState<Knob | null>(null);
@@ -29,16 +37,20 @@ export default function PedalCanvas({ pedal }: PedalCanvasProps) {
   const inputPosXRef = React.useRef<HTMLInputElement>(null);
   const inputPosYRef = React.useRef<HTMLInputElement>(null);
 
+  const selectedKnobId = selectedKnob?.id;
+  const canvas = canvasRef.current;
+
   React.useEffect(() => {
-    if (canvasRef.current && context && pedal) {
+    if (canvas && context && pedal) {
       drawPedal({
-        canvas: canvasRef.current,
+        canvas,
         context,
         pedal,
-        selectedId: selectedKnob?.id,
+        resolution,
+        selectedId: selectedKnobId,
       });
     }
-  }, [context, pedal]);
+  }, [canvas, context, selectedKnobId, pedal, resolution]);
 
   const handleMouseDown = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
@@ -51,6 +63,7 @@ export default function PedalCanvas({ pedal }: PedalCanvasProps) {
 
       const { newDragTarget, isTarget, newIsRotate } = checkKnobTarget({
         position: startPos.current,
+        resolution,
         knobs: pedal.knobs,
         onSelect: (knob) => {
           //   selectedKnob.current = knob;
@@ -102,6 +115,7 @@ export default function PedalCanvas({ pedal }: PedalCanvasProps) {
           canvas: canvasRef.current,
           context,
           pedal,
+          resolution,
           selectedId: selectedKnob?.id,
         });
     }
@@ -118,16 +132,14 @@ export default function PedalCanvas({ pedal }: PedalCanvasProps) {
   return (
     <div className="relative h-[500px]">
       <canvas
-        className="rounded-2xl  bg-darkblue"
-        height={CANVAS_HEIGHT * resolution}
-        width={CANVAS_WIDTH * resolution}
+        className={clsx("rounded-2xl", { "bg-darkblue": hasBackground })}
+        height={height * resolution}
+        width={width * resolution}
         style={{
           // backgroundColor: "lightgray",
-          height: CANVAS_HEIGHT,
-          width: CANVAS_WIDTH,
-          aspectRatio: `auto ${CANVAS_HEIGHT * resolution} / ${
-            CANVAS_WIDTH * resolution
-          }`,
+          height: height,
+          width: width,
+          aspectRatio: `auto ${height * resolution} / ${height * resolution}`,
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -141,7 +153,7 @@ export default function PedalCanvas({ pedal }: PedalCanvasProps) {
           knob={selectedKnob}
           inputPosXRef={inputPosXRef}
           inputPosYRef={inputPosYRef}
-          width={CANVAS_WIDTH}
+          width={width}
         />
       )}
     </div>
