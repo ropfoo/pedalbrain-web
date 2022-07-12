@@ -18,7 +18,8 @@ import { H1 } from "~/components/Text";
 import Input from "~/components/Form/Input";
 import PedalCanvas from "~/components/PedalCanvas/PedalCanvas";
 import type { PedalShape } from "~/utils/canvas/types";
-import Slider from "~/components/Form/Slider";
+import Slider from "~/components/Form/Slider/Slider";
+import SliderToggle from "~/components/Form/Slider/SliderToggle";
 
 type LoaderData = {
   pedal: EditorPedal;
@@ -107,32 +108,48 @@ export default function PedalRoute() {
 
         <Form method="post">
           <input hidden type="text" name="id" value={pedal.id} />
-          <Slider
-            value={pedalShape?.size.width}
-            min={100}
-            max={400}
-            onChange={(val) =>
-              setPedalShape(
-                (ps) => ps && { ...ps, size: { ...ps?.size, width: val } }
-              )
-            }
-            onAfterChange={() => submit(updatePedalSubmitButtonRef.current)}
-          />
+          <div className="flex">
+            <SliderToggle value={pedalShape?.size.width} label="width">
+              <Slider
+                value={pedalShape?.size.width}
+                min={100}
+                max={400}
+                onChange={(val) =>
+                  // update local pedal shape state
+                  setPedalShape(
+                    (ps) => ps && { ...ps, size: { ...ps?.size, width: val } }
+                  )
+                }
+                onAfterChange={() => submit(updatePedalSubmitButtonRef.current)}
+              />
+            </SliderToggle>
+            <div className="mr-4" />
+            <SliderToggle value={pedalShape?.size.height} label="height">
+              <Slider
+                value={pedalShape?.size.height}
+                min={100}
+                max={400}
+                onChange={(val) =>
+                  // update local pedal shape state
+                  setPedalShape(
+                    (ps) => ps && { ...ps, size: { ...ps?.size, height: val } }
+                  )
+                }
+                onAfterChange={() => submit(updatePedalSubmitButtonRef.current)}
+              />
+            </SliderToggle>
+          </div>
 
-          <input
-            className="text-black"
-            name="width"
-            value={pedalShape?.size.width}
-          />
-          <Input label="height" name="height" defaultValue={pedal.height} />
+          <input hidden name="width" value={pedalShape?.size.width} />
+          <input hidden name="height" value={pedalShape?.size.height} />
+
           <button
+            hidden
             ref={updatePedalSubmitButtonRef}
             type="submit"
             name="_action"
             value="updatePedal"
-          >
-            save
-          </button>
+          />
         </Form>
       </div>
 
