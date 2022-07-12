@@ -1,6 +1,13 @@
+import type { Knob } from "@prisma/client";
+
 export type Position = {
   x: number;
   y: number;
+};
+
+export type Size = {
+  width: number;
+  height: number;
 };
 
 export type Box = {
@@ -8,6 +15,12 @@ export type Box = {
   y: number;
   w: number;
   h: number;
+};
+
+export type PedalShape = {
+  color: string;
+  size: Size;
+  knobs: Knob[];
 };
 
 export type KnobShape = {

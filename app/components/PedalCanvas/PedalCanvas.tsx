@@ -2,14 +2,13 @@ import type { Knob } from "@prisma/client";
 import clsx from "clsx";
 import * as React from "react";
 import { useCanvas } from "~/hooks/useCanvas";
-import type { EditorPedal } from "~/routes/pedals/$id";
 import { drawPedal } from "~/utils/canvas/helper";
-import type { Position } from "~/utils/canvas/types";
+import type { PedalShape, Position } from "~/utils/canvas/types";
 import { checkKnobTarget } from "~/utils/check-knob-target";
 import KnobOverlay from "./KnobOberlay";
 
 interface PedalCanvasProps {
-  pedal: EditorPedal;
+  pedalShape: PedalShape;
   resolution?: number;
   width?: number;
   height?: number;
@@ -17,7 +16,7 @@ interface PedalCanvasProps {
 }
 
 export default function PedalCanvas({
-  pedal,
+  pedalShape,
   resolution = 2,
   width = 500,
   height = 500,
@@ -41,21 +40,21 @@ export default function PedalCanvas({
   const canvas = canvasRef.current;
 
   React.useEffect(() => {
-    if (canvas && context && pedal) {
+    if (canvas && context && pedalShape) {
       drawPedal({
         canvas,
         context,
-        pedal,
+        pedalShape,
         resolution,
         selectedId: selectedKnobId,
       });
     }
-  }, [canvas, context, selectedKnobId, pedal, resolution]);
+  }, [canvas, context, selectedKnobId, pedalShape, resolution]);
 
   const handleMouseDown = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
-    if (canvasRef.current && pedal) {
+    if (canvasRef.current && pedalShape) {
       startPos.current = {
         x: Number(e.nativeEvent.offsetX - canvasRef.current.clientLeft),
         y: Number(e.nativeEvent.offsetY - canvasRef.current.clientTop),
@@ -64,7 +63,7 @@ export default function PedalCanvas({
       const { newDragTarget, isTarget, newIsRotate } = checkKnobTarget({
         position: startPos.current,
         resolution,
-        knobs: pedal.knobs,
+        knobs: pedalShape.knobs,
         onSelect: (knob) => {
           //   selectedKnob.current = knob;
           setSelectedKnob(knob);
@@ -110,11 +109,11 @@ export default function PedalCanvas({
         const degree = radians * (180 / Math.PI) * -1 + 90;
         dragTarget.current.rotation = degree;
       }
-      if (context && pedal)
+      if (context && pedalShape)
         drawPedal({
           canvas: canvasRef.current,
           context,
-          pedal,
+          pedalShape,
           resolution,
           selectedId: selectedKnob?.id,
         });

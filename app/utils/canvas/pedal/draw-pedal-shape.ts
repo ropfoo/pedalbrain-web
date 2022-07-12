@@ -1,19 +1,18 @@
 import { drawRoundRect } from "../draw-round-rect";
-import type { EditorPedal } from "~/models/pedal.server";
-//
+import type { PedalShape } from "../types";
+
 type DrawPedalParams = {
   context: CanvasRenderingContext2D;
-  pedal: EditorPedal;
+  pedalShape: PedalShape;
   resolution: number;
 };
 
 export function drawPedalShape({
   context,
-  pedal,
+  pedalShape,
   resolution,
 }: DrawPedalParams) {
-  const width = pedal?.width ?? 0;
-  const height = pedal?.height ?? 0;
+  const { width, height } = pedalShape.size;
 
   const resWidth = width * resolution;
   const resHeight = height * resolution;

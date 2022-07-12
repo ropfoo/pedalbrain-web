@@ -1,11 +1,11 @@
-import type { EditorPedal } from "~/models/pedal.server";
 import { drawKnobShpe } from "./pedal/draw-knob-shape";
 import { drawPedalShape } from "./pedal/draw-pedal-shape";
+import type { PedalShape } from "./types";
 
 type DrawPedalParams = {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
-  pedal: EditorPedal;
+  pedalShape: PedalShape;
   resolution: number;
   selectedId?: string;
 };
@@ -13,21 +13,21 @@ type DrawPedalParams = {
 export function drawPedal({
   canvas,
   context,
-  pedal,
+  pedalShape,
   resolution,
   selectedId,
 }: DrawPedalParams) {
-  if (pedal) {
+  if (pedalShape) {
     context.clearRect(
       0,
       0,
       canvas.clientWidth * resolution,
       canvas.clientHeight * resolution
     );
-    drawPedalShape({ context, pedal, resolution });
+    drawPedalShape({ context, pedalShape, resolution });
 
     // draw knobs
-    pedal.knobs.map((knob) =>
+    pedalShape.knobs.map((knob) =>
       drawKnobShpe({ knob, context, selectedId, resolution })
     );
   }
