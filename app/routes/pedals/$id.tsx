@@ -107,7 +107,7 @@ export default function PedalRoute() {
         <H1>{pedal.name}</H1>
 
         <Form method="post">
-          <input hidden type="text" name="id" value={pedal.id} />
+          <input readOnly hidden type="text" name="id" value={pedal.id} />
           <div className="flex">
             <SliderToggle value={pedalShape?.size.width} label="width">
               <Slider
@@ -140,8 +140,13 @@ export default function PedalRoute() {
             </SliderToggle>
           </div>
 
-          <input hidden name="width" value={pedalShape?.size.width} />
-          <input hidden name="height" value={pedalShape?.size.height} />
+          <input readOnly hidden name="width" value={pedalShape?.size.width} />
+          <input
+            readOnly
+            hidden
+            name="height"
+            value={pedalShape?.size.height}
+          />
 
           <button
             hidden
