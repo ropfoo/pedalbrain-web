@@ -6,13 +6,8 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import {
-  Form,
-  Link,
-  RouteMatch,
-  useLoaderData,
-  useSubmit,
-} from "@remix-run/react";
+import { Outlet, RouteMatch } from "@remix-run/react";
+import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import { updateKnob } from "~/models/knob.server";
 import { H1 } from "~/components/Text";
 import Input from "~/components/Form/Input";
@@ -20,6 +15,7 @@ import PedalCanvas from "~/components/PedalCanvas/PedalCanvas";
 import type { PedalShape } from "~/utils/canvas/types";
 import Slider from "~/components/Form/Slider/Slider";
 import SliderToggle from "~/components/Form/Slider/SliderToggle";
+import { useInitPedalShape } from "~/hooks/useInitPedalShape";
 
 type LoaderData = {
   pedal: EditorPedal;
@@ -45,16 +41,14 @@ export const loader: LoaderFunction = async ({ params }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
 
-  console.log("i got called", formData.get("_action"));
+  const pedalId = params.id;
 
   if (formData.get("_action") === "updatePedal") {
-    console.log("update");
-    const id = formData.get("id")?.toString();
     const width = Number(formData.get("width"));
     const height = Number(formData.get("height"));
 
-    if (id && width && height) {
-      await updatePedal({ id, width, height });
+    if (pedalId && width && height) {
+      await updatePedal({ id: pedalId, width, height });
     }
 
     return true;
@@ -80,22 +74,8 @@ export const handle = {
 export default function PedalRoute() {
   const { pedal } = useLoaderData<LoaderData>();
   const submit = useSubmit();
-  const [pedalWidth, setPedalWidth] = React.useState<number>(
-    () => pedal?.width ?? 0
-  );
 
-  const [pedalShape, setPedalShape] = React.useState<PedalShape | null>(() =>
-    pedal
-      ? {
-          color: pedal?.color,
-          knobs: pedal.knobs,
-          size: {
-            width: pedal.width,
-            height: pedal.height,
-          },
-        }
-      : null
-  );
+  const [pedalShape, setPedalShape] = useInitPedalShape(pedal);
 
   const updatePedalSubmitButtonRef = React.useRef<HTMLButtonElement>(null);
 
@@ -156,6 +136,11 @@ export default function PedalRoute() {
             value="updatePedal"
           />
         </Form>
+
+        <div>
+          <Link to="newKnob">new knob thiny</Link>
+          <Outlet />
+        </div>
       </div>
 
       <div className="flex justify-end">

@@ -24,9 +24,10 @@ export default function KnobOverlay({
     >
       <h3>{name}</h3>
       <Form method="post">
-        <input hidden type="text" name="id" value={id} />
+        <input readOnly hidden type="text" name="id" value={id} />
         <input
           ref={inputPosXRef}
+          readOnly
           hidden
           type="text"
           name="posX"
@@ -34,6 +35,7 @@ export default function KnobOverlay({
         />
         <input
           ref={inputPosYRef}
+          readOnly
           hidden
           type="text"
           name="posY"
