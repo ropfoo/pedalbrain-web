@@ -1,6 +1,5 @@
 import { drawRoundRect } from "../draw-round-rect";
-import type { Pedal } from "@prisma/client";
-import type { EditorPedal } from "~/routes/pedals/$id";
+import type { EditorPedal } from "~/models/pedal.server";
 //
 type DrawPedalParams = {
   context: CanvasRenderingContext2D;

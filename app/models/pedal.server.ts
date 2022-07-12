@@ -1,5 +1,7 @@
 import { prisma } from "~/db.server";
 
+export type EditorPedal = Awaited<ReturnType<typeof getPedal>>;
+
 export async function getPedal(id: string) {
   return prisma.pedal.findFirst({
     where: { id },
@@ -7,14 +9,9 @@ export async function getPedal(id: string) {
   });
 }
 
-export async function getPedalListing() {
+export async function getPedals() {
   return prisma.pedal.findMany({
-    select: {
-      id: true,
-      name: true,
-      color: true,
-      createdAt: true,
-    },
+    include: { knobs: true },
   });
 }
 

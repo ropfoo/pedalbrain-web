@@ -8,7 +8,11 @@ export default function Navigation() {
     <nav className=" fixed z-50 flex h-16 w-full items-center  justify-between bg-darkblue px-16">
       <div>
         <NavLink to={"/"}>
-          <img className="h-11 w-11" src={logo} alt="" />
+          <img
+            className="h-11 w-11 transition-transform hover:scale-105 "
+            src={logo}
+            alt=""
+          />
         </NavLink>
       </div>
       <div>

@@ -1,4 +1,4 @@
-import type { EditorPedal } from "~/routes/pedals/$id";
+import type { EditorPedal } from "~/models/pedal.server";
 import { drawKnobShpe } from "./pedal/draw-knob-shape";
 import { drawPedalShape } from "./pedal/draw-pedal-shape";
 

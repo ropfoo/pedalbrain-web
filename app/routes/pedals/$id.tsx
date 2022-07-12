@@ -1,4 +1,4 @@
-import { getPedal, updatePedal } from "~/models/pedal.server";
+import { EditorPedal, getPedal, updatePedal } from "~/models/pedal.server";
 import type {
   LoaderFunction,
   ActionFunction,
@@ -11,8 +11,6 @@ import { H1 } from "~/components/Text";
 import Input from "~/components/Form/Input";
 import PedalCanvas from "~/components/PedalCanvas/PedalCanvas";
 import PedalPreview from "~/components/PedalCanvas/PedalPreview";
-
-export type EditorPedal = Awaited<ReturnType<typeof getPedal>>;
 
 type LoaderData = {
   pedal: EditorPedal;
@@ -87,7 +85,6 @@ export default function PedalRoute() {
             save
           </button>
         </Form>
-        <PedalPreview pedal={pedal} scale={0.4} />
       </div>
 
       <div className="flex justify-end">

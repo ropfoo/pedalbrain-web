@@ -1,4 +1,4 @@
-import type { EditorPedal } from "~/routes/pedals/$id";
+import type { EditorPedal } from "~/models/pedal.server";
 import PedalCanvas from "./PedalCanvas";
 
 interface PedalPreviewProps {

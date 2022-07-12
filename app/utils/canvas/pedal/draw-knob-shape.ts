@@ -43,8 +43,14 @@ export function drawKnobShpe({
     });
   }
 
-  drawCircle(context, { x, y }, w);
-  drawPointer(context, { x, y }, rotation, w);
+  drawCircle({ context, position: { x, y }, size: w, resolution });
+  drawPointer({
+    context,
+    position: { x, y },
+    degree: rotation,
+    size: w,
+    resolution,
+  });
 
   // Text
   context.fillStyle = "black";
@@ -53,32 +59,52 @@ export function drawKnobShpe({
   context.fillText(name, x, y + w / 2 + 20 * resolution);
 }
 
-function drawCircle(
-  context: CanvasRenderingContext2D,
-  position: Position,
-  size: number
-) {
+function drawCircle({
+  context,
+  position,
+  size,
+  resolution,
+}: {
+  context: CanvasRenderingContext2D;
+  position: Position;
+  size: number;
+  resolution: number;
+}) {
   context.beginPath();
   context.fillStyle = "black";
   context.arc(position.x, position.y, size / 2, 0, 2 * Math.PI);
   context.fill();
 }
 
-function drawPointer(
-  ctx: CanvasRenderingContext2D,
-  { x, y }: Position,
-  degree: number,
-  size: number
-) {
+function drawPointer({
+  context,
+  position,
+  degree,
+  size,
+  resolution,
+}: {
+  context: CanvasRenderingContext2D;
+  position: Position;
+  degree: number;
+  size: number;
+  resolution: number;
+}) {
+  const { x, y } = position;
+
   // Matrix transformation
-  ctx.translate(x, y);
-  ctx.rotate(degree);
-  ctx.translate(-x, -y);
+  context.translate(x, y);
+  context.rotate(degree);
+  context.translate(-x, -y);
 
   // Rotated rectangle
-  ctx.fillStyle = "white";
-  ctx.fillRect(x, y, (size / 2) * 0.85, 5);
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  context.fillStyle = "white";
+  //   context.fillRect(x, y, (size / 2) * 0.85, 5 * resolution);
+  drawRoundRect({
+    context,
+    box: { x, y, w: (size / 2) * 0.85, h: 5 * resolution },
+    radius: 2.5 * resolution,
+  });
+  context.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 function drawRotationAreaShape(

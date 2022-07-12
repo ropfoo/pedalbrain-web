@@ -1,14 +1,17 @@
 import { useLoaderData } from "@remix-run/react";
-import { json, LoaderFunction } from "@remix-run/server-runtime";
+import { json } from "@remix-run/server-runtime";
+import type { LoaderFunction } from "@remix-run/server-runtime";
 import { Link } from "react-router-dom";
-import { getPedalListing } from "~/models/pedal.server";
+import PedalList from "~/components/PedalList/PedalList";
+import type { EditorPedal } from "~/models/pedal.server";
+import { getPedals } from "~/models/pedal.server";
 
 type LoaderData = {
-  pedals: Awaited<ReturnType<typeof getPedalListing>>;
+  pedals: EditorPedal[];
 };
 
 export const loader: LoaderFunction = async () => {
-  const pedals = await getPedalListing();
+  const pedals = await getPedals();
 
   return json<LoaderData>({ pedals });
 };
@@ -19,13 +22,10 @@ export const handle = {
 
 export default function PedalsRoute() {
   const { pedals } = useLoaderData<LoaderData>();
+
   return (
     <div>
-      {pedals.map((pedal) => (
-        <Link key={pedal.id} to={pedal.id}>
-          {pedal.name}
-        </Link>
-      ))}
+      <PedalList pedals={pedals} />
     </div>
   );
 }

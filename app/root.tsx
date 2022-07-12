@@ -15,13 +15,14 @@ import {
 
 import tailwindStylesheetUrl from "./styles/tailwind.css";
 import fontsUrl from "./styles/fonts.css";
+
 import { getUser } from "./session.server";
 import Navigation from "./components/Navigation";
 
 export const links: LinksFunction = () => {
   return [
-    { rel: "stylesheet", href: fontsUrl },
     { rel: "stylesheet", href: tailwindStylesheetUrl },
+    { rel: "stylesheet", href: fontsUrl },
   ];
 };
 
