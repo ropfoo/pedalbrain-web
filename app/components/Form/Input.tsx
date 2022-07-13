@@ -8,7 +8,7 @@ export default function Input({ name, label, defaultValue }: InputProps) {
   return (
     <div className="mb-3">
       <label htmlFor={name}>
-        <p className="mb-1 text-lightblue">{label}</p>
+        <p className=" text-lightblue">{label}</p>
       </label>
       <input
         id={name}
