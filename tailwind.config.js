@@ -10,7 +10,7 @@ module.exports = {
       purple: "#550086",
       darkblue: "#080025",
       blue: "#140063",
-      lightblue: "#3A3FBC",
+      lightblue: "#5d61e8",
     },
     fontFamily: { sans: ["Roboto", "sans-serif"] },
   },
