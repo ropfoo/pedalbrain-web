@@ -1,7 +1,9 @@
 import type { Knob } from "@prisma/client";
 import clsx from "clsx";
+import { AnimatePresence, motion } from "framer-motion";
 import * as React from "react";
 import { useCanvas } from "~/hooks/useCanvas";
+import { useOnOutsideClick } from "~/hooks/useOnOutsideClick";
 import { drawPedal } from "~/utils/canvas/helper";
 import type { PedalShape, Position } from "~/utils/canvas/types";
 import { checkKnobTarget } from "~/utils/check-knob-target";
@@ -25,6 +27,10 @@ export default function PedalCanvas({
   const { canvasRef, context } = useCanvas();
 
   const [selectedKnob, setSelectedKnob] = React.useState<Knob | null>(null);
+
+  const pedalCanvasWrapperRef = React.useRef<HTMLDivElement>(null);
+
+  useOnOutsideClick(pedalCanvasWrapperRef, () => setSelectedKnob(null));
 
   const isMouseDown = React.useRef(false);
   const isRotationMode = React.useRef(false);
@@ -129,7 +135,7 @@ export default function PedalCanvas({
   const handleMouseOut = () => handleMouseUp();
 
   return (
-    <div className="relative h-[500px]">
+    <div ref={pedalCanvasWrapperRef} className="relative h-[500px]">
       <canvas
         className={clsx("rounded-2xl", { "bg-darkblue": hasBackground })}
         height={height * resolution}
@@ -147,14 +153,23 @@ export default function PedalCanvas({
         ref={canvasRef}
       />
 
-      {selectedKnob && (
-        <KnobOverlay
-          knob={selectedKnob}
-          inputPosXRef={inputPosXRef}
-          inputPosYRef={inputPosYRef}
-          width={width}
-        />
-      )}
+      <AnimatePresence>
+        {selectedKnob && (
+          <motion.div
+            transition={{ bounce: 0, duration: 0.2 }}
+            initial={{ opacity: 0, y: 35 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 35 }}
+          >
+            <KnobOverlay
+              knob={selectedKnob}
+              inputPosXRef={inputPosXRef}
+              inputPosYRef={inputPosYRef}
+              width={width}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
