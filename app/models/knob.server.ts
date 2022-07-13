@@ -8,3 +8,7 @@ export async function updateKnob(id: string, posX: number, posY: number) {
 export async function createKnob(newKnob: Omit<Knob, "id" | "Pedal">) {
   return prisma.knob.create({ data: newKnob });
 }
+
+export async function deleteKnob(id: string) {
+  return prisma.knob.delete({ where: { id } });
+}

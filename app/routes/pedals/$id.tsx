@@ -1,18 +1,18 @@
 import * as React from "react";
-import { EditorPedal, getPedal, updatePedal } from "~/models/pedal.server";
+import { getPedal, updatePedal } from "~/models/pedal.server";
+import type { EditorPedal } from "~/models/pedal.server";
 import type {
   LoaderFunction,
   ActionFunction,
   MetaFunction,
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Outlet, RouteMatch } from "@remix-run/react";
+import { Outlet } from "@remix-run/react";
+import type { RouteMatch } from "@remix-run/react";
 import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
-import { updateKnob } from "~/models/knob.server";
+import { deleteKnob, updateKnob } from "~/models/knob.server";
 import { H1 } from "~/components/Text";
-import Input from "~/components/Form/Input";
 import PedalCanvas from "~/components/PedalCanvas/PedalCanvas";
-import type { PedalShape } from "~/utils/canvas/types";
 import Slider from "~/components/Form/Slider/Slider";
 import SliderToggle from "~/components/Form/Slider/SliderToggle";
 import { useInitPedalShape } from "~/hooks/useInitPedalShape";
@@ -43,24 +43,34 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const pedalId = params.id;
 
-  if (formData.get("_action") === "updatePedal") {
+  const actionType = formData.get("_action");
+
+  if (actionType === "updatePedal") {
     const width = Number(formData.get("width"));
     const height = Number(formData.get("height"));
 
     if (pedalId && width && height) {
       await updatePedal({ id: pedalId, width, height });
     }
-
-    return true;
   }
 
-  const id = formData.get("id")?.toString();
-  const posX = Number(formData.get("posX"));
-  const posY = Number(formData.get("posY"));
+  if (actionType === "updateKnob") {
+    const id = formData.get("id")?.toString();
+    const posX = Number(formData.get("posX"));
+    const posY = Number(formData.get("posY"));
 
-  if (id) {
-    await updateKnob(id, posX, posY);
+    if (id) {
+      await updateKnob(id, posX, posY);
+    }
   }
+
+  if (actionType === "deleteKnob") {
+    const id = formData.get("id")?.toString();
+    if (id) {
+      await deleteKnob(id);
+    }
+  }
+
   return true;
 };
 

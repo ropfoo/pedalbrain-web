@@ -166,6 +166,7 @@ export default function PedalCanvas({
               inputPosXRef={inputPosXRef}
               inputPosYRef={inputPosYRef}
               width={width}
+              onDelete={() => setSelectedKnob(null)}
             />
           </motion.div>
         )}

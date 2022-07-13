@@ -7,6 +7,7 @@ interface KnobOverlayProps {
   inputPosXRef: React.RefObject<HTMLInputElement>;
   inputPosYRef: React.RefObject<HTMLInputElement>;
   width: number;
+  onDelete?: () => void;
 }
 
 export default function KnobOverlay({
@@ -14,6 +15,7 @@ export default function KnobOverlay({
   inputPosXRef,
   inputPosYRef,
   width,
+  onDelete,
 }: KnobOverlayProps) {
   const { name, id } = knob;
 
@@ -41,7 +43,21 @@ export default function KnobOverlay({
           name="posY"
           value={inputPosYRef.current?.value}
         />
-        <button type="submit">update knob</button>
+        <button name="_action" value="updateKnob" type="submit">
+          update knob
+        </button>
+      </Form>
+
+      <Form method="post">
+        <input readOnly hidden type="text" name="id" value={id} />
+        <button
+          onClick={() => onDelete && onDelete()}
+          name="_action"
+          value="deleteKnob"
+          type="submit"
+        >
+          delete knob
+        </button>
       </Form>
     </div>
   );
