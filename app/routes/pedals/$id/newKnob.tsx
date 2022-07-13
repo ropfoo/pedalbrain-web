@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Form, useActionData } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
@@ -6,6 +7,7 @@ import Input from "~/components/Form/Input";
 import Slider from "~/components/Form/Slider/Slider";
 import SliderToggle from "~/components/Form/Slider/SliderToggle";
 import { createKnob } from "~/models/knob.server";
+import Validation, { useValdation } from "~/components/Form/Validation";
 
 const numString = z
   .string()
@@ -53,22 +55,36 @@ export default function NewKnobRoute() {
   return (
     <div>
       <Form method="post">
-        <Input
-          error={{
-            hasError: actionData?.name,
-            errorMessages: actionData?.name?._errors,
-          }}
-          label="label"
-          name="name"
-        />
-        <input readOnly hidden type="text" name="size" value={80} />
-        <SliderToggle value={80} label="size">
-          <Slider value={80} min={10} max={100} onChange={(val) => null} />
-        </SliderToggle>
-        <button type="submit" name="_action" value="createKnob">
-          create Knob
-        </button>
+        <Validation>
+          <Input
+            error={{
+              hasError: actionData?.name,
+              errorMessages: actionData?.name?._errors,
+            }}
+            label="label"
+            name="name"
+          />
+          <input readOnly hidden type="text" name="size" value={80} />
+          <SliderToggle value={80} label="size">
+            <Slider value={80} min={10} max={100} onChange={(val) => null} />
+          </SliderToggle>
+          <Button />
+        </Validation>
       </Form>
     </div>
   );
 }
+
+const Button = () => {
+  const { errors } = useValdation();
+  return (
+    <button
+      disabled={errors.length > 0}
+      type="submit"
+      name="_action"
+      value="createKnob"
+    >
+      create Knob
+    </button>
+  );
+};
