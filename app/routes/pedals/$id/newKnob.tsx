@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useTransition } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
@@ -15,7 +15,7 @@ const numString = z
   .transform((input) => parseFloat(input));
 
 const newKnobSchema = z.object({
-  name: z.string().min(1, { message: "Type in a pedal name" }),
+  name: z.string().min(1, { message: "Type in a knob name" }),
   size: numString,
   posX: numString,
   posY: numString,
@@ -44,12 +44,14 @@ export const action: ActionFunction = async ({ request, params }) => {
     const formattedError = validatedSchema.error.format();
     return json(formattedError);
   } else {
-    return await createKnob(validatedSchema.data);
+    await createKnob(validatedSchema.data);
+    return true;
   }
 };
 
 export default function NewKnobRoute() {
   const actionData = useActionData();
+
   console.log(actionData);
 
   return (
@@ -57,10 +59,11 @@ export default function NewKnobRoute() {
       <Form method="post">
         <Validation>
           <Input
-            error={{
-              hasError: actionData?.name,
-              errorMessages: actionData?.name?._errors,
-            }}
+            error={
+              actionData?.name && {
+                errorMessages: actionData?.name?._errors,
+              }
+            }
             label="label"
             name="name"
           />
