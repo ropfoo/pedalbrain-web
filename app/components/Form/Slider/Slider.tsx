@@ -22,8 +22,8 @@ export default function Slider({
       max={max}
       onChange={(val) => onChange(val)}
       onAfterChange={() => onAfterChange && onAfterChange()}
-      className=" flex h-1 items-center rounded-full bg-pink"
-      thumbClassName="bg-blue border-pink border-4 rounded-full w-6 h-6 drop-shadow-sm cursor-pointer"
+      className=" flex h-6 cursor-pointer items-center  after:h-1 after:w-full after:rounded-full after:bg-pink"
+      thumbClassName="bg-blue border-pink border-4 rounded-full w-7 h-7 drop-shadow-sm cursor-pointer"
       trackClassName="bg-pink"
     />
   );
