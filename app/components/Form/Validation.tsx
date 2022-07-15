@@ -36,15 +36,20 @@ export default function Validation({ children, schema }: ValidationProps) {
   const [errors, setErrors] = React.useState<string[]>([]);
 
   const checkError = (name: string, input: string) => {
+    // check if input is inside the validation schema
     const validation = schema.find((er) => er.name === name);
     let newTodos: ValidationTodo[] = [];
 
     if (validation) {
+      // get all validation todos
       const { todos } = validation;
       newTodos = todos;
       for (const todo of todos) {
         let newTodo = todo;
+        // call each validation function with current input
         newTodo.resolved = todo.validation(input);
+
+        // update todos with new data
         newTodos = newTodos.map((td) =>
           td.name === newTodo.name ? newTodo : td
         );
