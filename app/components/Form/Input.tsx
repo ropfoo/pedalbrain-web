@@ -25,11 +25,15 @@ export default function Input({
   const [value, setValue] = React.useState("");
   const { state } = useTransition();
 
+  const { checkError } = useValdation();
+
   const [inputError, setInputError] = React.useState<InputError | null>();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
     setInputError(null);
+    const test = checkError(name, event.target.value);
+    console.log(test);
   };
 
   const errorMessages = error?.errorMessages;

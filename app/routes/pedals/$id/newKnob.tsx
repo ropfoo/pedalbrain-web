@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Form, useActionData, useTransition } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
 import { z } from "zod";
@@ -57,22 +57,40 @@ export default function NewKnobRoute() {
   return (
     <div>
       <Form method="post">
-        <Validation>
-          <Input
-            error={
-              actionData?.name && {
-                errorMessages: actionData?.name?._errors,
-              }
+        {/* <Validation
+          schema={[
+            {
+              name: "name",
+              todos: [
+                {
+                  name: "Not in enoug chars",
+                  resolved: false,
+                  validation: (input) => input.length >= 5,
+                },
+                {
+                  name: "Must include letter t",
+                  resolved: false,
+                  validation: (input) => input.includes("t"),
+                },
+              ],
+            },
+          ]}
+        > */}
+        <Input
+          error={
+            actionData?.name && {
+              errorMessages: actionData?.name?._errors,
             }
-            label="label"
-            name="name"
-          />
-          <input readOnly hidden type="text" name="size" value={80} />
-          <SliderToggle value={80} label="size">
-            <Slider value={80} min={10} max={100} onChange={(val) => null} />
-          </SliderToggle>
-          <Button />
-        </Validation>
+          }
+          label="label"
+          name="name"
+        />
+        <input readOnly hidden type="text" name="size" value={80} />
+        <SliderToggle value={80} label="size">
+          <Slider value={80} min={10} max={100} onChange={(val) => null} />
+        </SliderToggle>
+        <Button />
+        {/* </Validation> */}
       </Form>
     </div>
   );
