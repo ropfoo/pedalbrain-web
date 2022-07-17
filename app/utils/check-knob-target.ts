@@ -25,8 +25,10 @@ export function checkKnobTarget({
   let isTarget = false;
 
   for (let i = 0; i < knobs.length; i++) {
-    const knob = knobs[i];
-
+    const arKnob = knobs[i];
+    // const knob = knobs[i];
+    const knob = { ...arKnob };
+    console.log(knob.name, knob);
     const rotationArea = getRotationArea({ knob, resolution });
     const dragArea = getDragArea({ knob, resolution });
 

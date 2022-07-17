@@ -3,7 +3,7 @@ import type { EditorPedal } from "~/models/pedal.server";
 import type { PedalShape } from "~/utils/canvas/types";
 
 export function useInitPedalShape(
-  pedal: EditorPedal
+  pedal: EditorPedal | null
 ): [
   PedalShape | null,
   React.Dispatch<React.SetStateAction<PedalShape | null>>
@@ -23,11 +23,13 @@ export function useInitPedalShape(
     [pedal]
   );
 
-  const [pedalShape, setPedalShape] = React.useState<PedalShape | null>(
-    initPedalShape
+  const [pedalShape, setPedalShape] = React.useState<PedalShape | null>(() =>
+    initPedalShape ? { ...initPedalShape } : null
   );
 
-  React.useEffect(() => setPedalShape(initPedalShape), [initPedalShape]);
+  React.useEffect(() => {
+    if (initPedalShape) setPedalShape(initPedalShape);
+  }, [initPedalShape]);
 
   return [pedalShape, setPedalShape];
 }

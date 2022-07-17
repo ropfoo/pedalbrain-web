@@ -17,7 +17,7 @@ import Slider from "~/components/Form/Slider/Slider";
 import SliderToggle from "~/components/Form/Slider/SliderToggle";
 import { useInitPedalShape } from "~/hooks/useInitPedalShape";
 
-type LoaderData = {
+export type LoaderData = {
   pedal: EditorPedal;
 };
 
@@ -83,6 +83,7 @@ export const handle = {
 
 export default function PedalRoute() {
   const { pedal } = useLoaderData<LoaderData>();
+  //   const initPedal: EditorPedal | null = { ...pedal };
   const submit = useSubmit();
 
   const [pedalShape, setPedalShape] = useInitPedalShape(pedal);
@@ -154,7 +155,13 @@ export default function PedalRoute() {
       </div>
 
       <div className="flex justify-end">
-        {pedalShape && <PedalCanvas hasBackground pedalShape={pedalShape} />}
+        {pedalShape && pedal && (
+          <PedalCanvas
+            hasBackground
+            pedalShape={pedalShape}
+            setPedalShape={(ps) => setPedalShape(ps)}
+          />
+        )}
       </div>
     </div>
   );

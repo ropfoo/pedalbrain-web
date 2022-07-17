@@ -4,16 +4,12 @@ import { Form } from "@remix-run/react";
 
 interface KnobOverlayProps {
   knob: Knob;
-  inputPosXRef: React.RefObject<HTMLInputElement>;
-  inputPosYRef: React.RefObject<HTMLInputElement>;
   width: number;
   onDelete?: () => void;
 }
 
 export default function KnobOverlay({
   knob,
-  inputPosXRef,
-  inputPosYRef,
   width,
   onDelete,
 }: KnobOverlayProps) {
@@ -25,28 +21,6 @@ export default function KnobOverlay({
       style={{ width }}
     >
       <h3>{name}</h3>
-      <Form method="post">
-        <input readOnly hidden type="text" name="id" value={id} />
-        <input
-          ref={inputPosXRef}
-          readOnly
-          hidden
-          type="text"
-          name="posX"
-          value={inputPosXRef.current?.value}
-        />
-        <input
-          ref={inputPosYRef}
-          readOnly
-          hidden
-          type="text"
-          name="posY"
-          value={inputPosYRef.current?.value}
-        />
-        <button name="_action" value="updateKnob" type="submit">
-          update knob
-        </button>
-      </Form>
 
       <Form method="post">
         <input readOnly hidden type="text" name="id" value={id} />

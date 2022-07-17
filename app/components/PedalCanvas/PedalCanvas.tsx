@@ -1,9 +1,12 @@
 import type { Knob } from "@prisma/client";
+import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import * as React from "react";
 import { useCanvas } from "~/hooks/useCanvas";
 import { useOnOutsideClick } from "~/hooks/useOnOutsideClick";
+import type { EditorPedal } from "~/models/pedal.server";
+import type { LoaderData } from "~/routes/pedals/$id";
 import { drawPedal } from "~/utils/canvas/helper";
 import type { PedalShape, Position } from "~/utils/canvas/types";
 import { checkKnobTarget } from "~/utils/check-knob-target";
@@ -11,10 +14,12 @@ import KnobOverlay from "./KnobOberlay";
 
 interface PedalCanvasProps {
   pedalShape: PedalShape;
+  setPedalShape: (ps: PedalShape) => void;
   resolution?: number;
   width?: number;
   height?: number;
   hasBackground?: boolean;
+  pedal?: EditorPedal;
 }
 
 export default function PedalCanvas({
@@ -23,8 +28,12 @@ export default function PedalCanvas({
   width = 500,
   height = 500,
   hasBackground = false,
-}: PedalCanvasProps) {
+  setPedalShape,
+}: //   pedal,
+PedalCanvasProps) {
   const { canvasRef, context } = useCanvas();
+
+  const { pedal } = useLoaderData<LoaderData>();
 
   const [selectedKnob, setSelectedKnob] = React.useState<Knob | null>(null);
 
@@ -36,11 +45,15 @@ export default function PedalCanvas({
   const isRotationMode = React.useRef(false);
 
   const dragTarget = React.useRef<Knob | null>(null);
+  const hasChanges = React.useRef(false);
 
   const startPos = React.useRef<Position>({ x: 0, y: 0 });
 
   const inputPosXRef = React.useRef<HTMLInputElement>(null);
   const inputPosYRef = React.useRef<HTMLInputElement>(null);
+
+  const submitUpdateRef = React.useRef<HTMLButtonElement>(null);
+  const updateSubmit = useSubmit();
 
   const selectedKnobId = selectedKnob?.id;
   const canvas = canvasRef.current;
@@ -69,12 +82,18 @@ export default function PedalCanvas({
       const { newDragTarget, isTarget, newIsRotate } = checkKnobTarget({
         position: startPos.current,
         resolution,
-        knobs: pedalShape.knobs,
+        knobs: [...pedalShape.knobs],
         onSelect: (knob) => {
-          //   selectedKnob.current = knob;
+          if (inputPosXRef.current && inputPosYRef.current) {
+            inputPosXRef.current.value = knob.posX.toString();
+            inputPosYRef.current.value = knob.posY.toString();
+          }
+
           setSelectedKnob(knob);
         },
-        onDeselect: () => setSelectedKnob(null),
+        onDeselect: () => {
+          setSelectedKnob(null);
+        },
       });
 
       isMouseDown.current = isTarget;
@@ -104,22 +123,30 @@ export default function PedalCanvas({
       };
 
       if (!isRotationMode.current && dragTarget.current) {
-        dragTarget.current.posX += dx;
-        dragTarget.current.posY += dy;
+        dragTarget.current.posX = dragTarget.current.posX + dx;
+        dragTarget.current.posY = dragTarget.current.posY + dy;
         if (inputPosXRef.current && inputPosYRef.current) {
           inputPosXRef.current.value = dragTarget.current.posX.toString();
           inputPosYRef.current.value = dragTarget.current.posY.toString();
         }
+        hasChanges.current = true;
       } else if (isRotationMode.current && dragTarget.current) {
         const radians = Math.atan2(mouseX - dx, mouseY - dy);
         const degree = radians * (180 / Math.PI) * -1 + 90;
         dragTarget.current.rotation = degree;
       }
+
       if (context && pedalShape)
         drawPedal({
           canvas: canvasRef.current,
           context,
-          pedalShape,
+          pedalShape: {
+            ...pedalShape,
+            knobs: pedalShape.knobs.map((k) => {
+              if (k.id === dragTarget.current?.id) return dragTarget.current;
+              return k;
+            }),
+          },
           resolution,
           selectedId: selectedKnob?.id,
         });
@@ -127,13 +154,23 @@ export default function PedalCanvas({
   };
 
   const handleMouseUp = () => {
+    if (hasChanges.current) {
+      hasChanges.current = false;
+      updateSubmit(submitUpdateRef.current);
+    }
+    setPedalShape({
+      ...pedalShape,
+      knobs: pedalShape.knobs.map((k) => {
+        if (k.id === selectedKnob?.id) return selectedKnob;
+        return k;
+      }),
+    });
     dragTarget.current = null;
     isRotationMode.current = false;
     isMouseDown.current = true;
   };
 
   const handleMouseOut = () => handleMouseUp();
-
   return (
     <div ref={pedalCanvasWrapperRef} className="relative h-[500px]">
       <canvas
@@ -163,14 +200,40 @@ export default function PedalCanvas({
           >
             <KnobOverlay
               knob={selectedKnob}
-              inputPosXRef={inputPosXRef}
-              inputPosYRef={inputPosYRef}
               width={width}
               onDelete={() => setSelectedKnob(null)}
             />
           </motion.div>
         )}
       </AnimatePresence>
+      <Form hidden method="post">
+        <input readOnly hidden type="text" name="id" value={selectedKnob?.id} />
+        <input
+          ref={inputPosXRef}
+          readOnly
+          hidden
+          type="text"
+          name="posX"
+          value={inputPosXRef.current?.value}
+        />
+        <input
+          ref={inputPosYRef}
+          readOnly
+          hidden
+          type="text"
+          name="posY"
+          value={inputPosYRef.current?.value}
+        />
+        <button
+          hidden
+          ref={submitUpdateRef}
+          name="_action"
+          value="updateKnob"
+          type="submit"
+        >
+          update knob
+        </button>
+      </Form>
     </div>
   );
 }
