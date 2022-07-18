@@ -16,6 +16,7 @@ import PedalCanvas from "~/components/PedalCanvas/PedalCanvas";
 import Slider from "~/components/Form/Slider/Slider";
 import SliderToggle from "~/components/Form/Slider/SliderToggle";
 import { useInitPedalShape } from "~/hooks/useInitPedalShape";
+import { updateKnobSchema } from "~/utils/zod/schema/knob-schema";
 
 export type LoaderData = {
   pedal: EditorPedal;
@@ -40,6 +41,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 
 export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
+  const formEntries = Object.fromEntries(formData);
 
   const pedalId = params.id;
 
@@ -55,12 +57,12 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (actionType === "updateKnob") {
-    const id = formData.get("id")?.toString();
-    const posX = Number(formData.get("posX"));
-    const posY = Number(formData.get("posY"));
+    const validatedSchema = updateKnobSchema.safeParse(formEntries);
 
-    if (id) {
-      await updateKnob(id, posX, posY);
+    if (!validatedSchema.success) {
+      return json(validatedSchema.error.format());
+    } else {
+      await updateKnob({ ...validatedSchema.data, rotation: 0 });
     }
   }
 

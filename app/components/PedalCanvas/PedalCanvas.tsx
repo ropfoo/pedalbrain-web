@@ -208,11 +208,12 @@ PedalCanvasProps) {
       </AnimatePresence>
       <Form hidden method="post">
         <input readOnly hidden type="text" name="id" value={selectedKnob?.id} />
+        <input readOnly hidden name="name" value={selectedKnob?.name} />
+        <input readOnly hidden name="size" value={selectedKnob?.size} />
         <input
           ref={inputPosXRef}
           readOnly
           hidden
-          type="text"
           name="posX"
           value={inputPosXRef.current?.value}
         />
@@ -220,7 +221,6 @@ PedalCanvasProps) {
           ref={inputPosYRef}
           readOnly
           hidden
-          type="text"
           name="posY"
           value={inputPosYRef.current?.value}
         />

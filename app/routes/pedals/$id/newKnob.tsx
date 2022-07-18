@@ -1,27 +1,12 @@
-import * as React from "react";
 import { Form, useActionData } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/server-runtime";
-import { z } from "zod";
 import Input from "~/components/Form/Input";
 import Slider from "~/components/Form/Slider/Slider";
 import SliderToggle from "~/components/Form/Slider/SliderToggle";
 import { createKnob } from "~/models/knob.server";
-import Validation, { useValdation } from "~/components/Form/Validation";
-
-const numString = z
-  .string()
-  .min(1, { message: "bla error" })
-  .transform((input) => parseFloat(input));
-
-const newKnobSchema = z.object({
-  name: z.string().min(1, { message: "Type in a knob name" }),
-  size: numString,
-  posX: numString,
-  posY: numString,
-  rotation: numString,
-  pedalId: z.string().min(1),
-});
+import { useValdation } from "~/components/Form/Validation";
+import { createKnobSchema } from "~/utils/zod/schema/knob-schema";
 
 export const action: ActionFunction = async ({ request, params }) => {
   const pedalId = params.id;
@@ -34,7 +19,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     posY: "50",
   };
 
-  const validatedSchema = newKnobSchema.safeParse({
+  const validatedSchema = createKnobSchema.safeParse({
     ...formEntries,
     ...defaultKnobData,
     pedalId,
