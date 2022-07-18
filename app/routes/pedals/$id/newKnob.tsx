@@ -5,8 +5,8 @@ import Input from "~/components/Form/Input";
 import Slider from "~/components/Form/Slider/Slider";
 import SliderToggle from "~/components/Form/Slider/SliderToggle";
 import { createKnob } from "~/models/knob.server";
-import { useValdation } from "~/components/Form/Validation";
 import { createKnobSchema } from "~/utils/zod/schema/knob-schema";
+import Button from "~/components/Form/Button";
 
 export const action: ActionFunction = async ({ request, params }) => {
   const pedalId = params.id;
@@ -74,23 +74,9 @@ export default function NewKnobRoute() {
         <SliderToggle value={80} label="size">
           <Slider value={80} min={10} max={100} onChange={(val) => null} />
         </SliderToggle>
-        <Button />
+        <Button>add knob</Button>
         {/* </Validation> */}
       </Form>
     </div>
   );
 }
-
-const Button = () => {
-  const { errors } = useValdation();
-  return (
-    <button
-      disabled={errors.length > 0}
-      type="submit"
-      name="_action"
-      value="createKnob"
-    >
-      create Knob
-    </button>
-  );
-};
