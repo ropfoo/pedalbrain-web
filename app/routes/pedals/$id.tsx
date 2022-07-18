@@ -10,13 +10,20 @@ import { json } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import type { RouteMatch } from "@remix-run/react";
 import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
-import { deleteKnob, updateKnob } from "~/models/knob.server";
+import {
+  deleteKnob,
+  updateKnobGeneral,
+  updateKnobPosition,
+} from "~/models/knob.server";
 import { H1 } from "~/components/Text";
 import PedalCanvas from "~/components/PedalCanvas/PedalCanvas";
 import Slider from "~/components/Form/Slider/Slider";
 import SliderToggle from "~/components/Form/Slider/SliderToggle";
 import { useInitPedalShape } from "~/hooks/useInitPedalShape";
-import { updateKnobSchema } from "~/utils/zod/schema/knob-schema";
+import {
+  updateKnobGeneralSchema,
+  updateKnobPositionSchema,
+} from "~/utils/zod/schema/knob-schema";
 
 export type LoaderData = {
   pedal: EditorPedal;
@@ -56,13 +63,23 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
   }
 
-  if (actionType === "updateKnob") {
-    const validatedSchema = updateKnobSchema.safeParse(formEntries);
+  if (actionType === "updateKnobPosition") {
+    const validatedSchema = updateKnobPositionSchema.safeParse(formEntries);
 
     if (!validatedSchema.success) {
       return json(validatedSchema.error.format());
     } else {
-      await updateKnob({ ...validatedSchema.data, rotation: 0 });
+      await updateKnobPosition(validatedSchema.data);
+    }
+  }
+
+  if (actionType === "updateKnobGeneral") {
+    const validatedSchema = updateKnobGeneralSchema.safeParse(formEntries);
+
+    if (!validatedSchema.success) {
+      return json(validatedSchema.error.format());
+    } else {
+      await updateKnobGeneral(validatedSchema.data);
     }
   }
 

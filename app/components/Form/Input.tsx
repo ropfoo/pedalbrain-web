@@ -10,6 +10,7 @@ interface InputProps {
   name: string;
   error?: InputError;
   defaultValue?: string;
+  onChange?: (input: string) => void;
 }
 
 type InputError = {
@@ -21,8 +22,9 @@ export default function Input({
   label,
   error,
   defaultValue,
+  onChange,
 }: InputProps) {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(defaultValue);
   const { state } = useTransition();
 
   const { checkError } = useValdation();
@@ -32,8 +34,8 @@ export default function Input({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
     setInputError(null);
+    if (onChange) onChange(event.target.value);
     const test = checkError(name, event.target.value);
-    console.log(test);
   };
 
   const errorMessages = error?.errorMessages;
@@ -45,6 +47,8 @@ export default function Input({
       setInputError(null);
     }
   }, [errorMessages, state]);
+
+  React.useEffect(() => setValue(defaultValue), [defaultValue]);
 
   return (
     <div className="mb-3">

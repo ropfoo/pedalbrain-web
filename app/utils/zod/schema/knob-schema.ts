@@ -1,12 +1,16 @@
 import { z } from "zod";
 import { numString } from "../helper/num-string";
 
-export const updateKnobSchema = z.object({
+export const updateKnobGeneralSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
+  size: numString,
+});
+
+export const updateKnobPositionSchema = z.object({
+  id: z.string(),
   posX: numString,
   posY: numString,
-  size: numString,
 });
 
 export const createKnobSchema = z.object({

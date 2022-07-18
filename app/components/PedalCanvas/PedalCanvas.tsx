@@ -199,14 +199,24 @@ PedalCanvasProps) {
               knob={selectedKnob}
               width={width}
               onDelete={() => setSelectedKnob(null)}
+              onNameChange={(name) => {
+                console.log(name);
+                // TODO think of better solution (SETS?!?!)
+                setPedalShape({
+                  ...pedalShape,
+                  knobs: pedalShape.knobs.map((k) => {
+                    if (k.id === selectedKnob?.id)
+                      return { ...selectedKnob, name };
+                    return k;
+                  }),
+                });
+              }}
             />
           </motion.div>
         )}
       </AnimatePresence>
       <Form hidden method="post">
         <input readOnly hidden type="text" name="id" value={selectedKnob?.id} />
-        <input readOnly hidden name="name" value={selectedKnob?.name} />
-        <input readOnly hidden name="size" value={selectedKnob?.size} />
         <input
           ref={inputPosXRef}
           readOnly
@@ -225,11 +235,9 @@ PedalCanvasProps) {
           hidden
           ref={submitUpdateRef}
           name="_action"
-          value="updateKnob"
+          value="updateKnobPosition"
           type="submit"
-        >
-          update knob
-        </button>
+        />
       </Form>
     </div>
   );
