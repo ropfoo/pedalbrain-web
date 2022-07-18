@@ -1,12 +1,11 @@
 import type { Knob } from "@prisma/client";
-import { Form, useLoaderData, useSubmit } from "@remix-run/react";
+import { Form, useSubmit } from "@remix-run/react";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import * as React from "react";
 import { useCanvas } from "~/hooks/useCanvas";
 import { useOnOutsideClick } from "~/hooks/useOnOutsideClick";
 import type { EditorPedal } from "~/models/pedal.server";
-import type { LoaderData } from "~/routes/pedals/$id";
 import { drawPedal } from "~/utils/canvas/helper";
 import type { PedalShape, Position } from "~/utils/canvas/types";
 import { checkKnobTarget } from "~/utils/check-knob-target";
@@ -32,8 +31,6 @@ export default function PedalCanvas({
 }: //   pedal,
 PedalCanvasProps) {
   const { canvasRef, context } = useCanvas();
-
-  const { pedal } = useLoaderData<LoaderData>();
 
   const [selectedKnob, setSelectedKnob] = React.useState<Knob | null>(null);
 
@@ -142,6 +139,7 @@ PedalCanvasProps) {
           context,
           pedalShape: {
             ...pedalShape,
+            // TODO use SET instead of array
             knobs: pedalShape.knobs.map((k) => {
               if (k.id === dragTarget.current?.id) return dragTarget.current;
               return k;
@@ -178,7 +176,6 @@ PedalCanvasProps) {
         height={height * resolution}
         width={width * resolution}
         style={{
-          // backgroundColor: "lightgray",
           height: height,
           width: width,
           aspectRatio: `auto ${height * resolution} / ${height * resolution}`,
