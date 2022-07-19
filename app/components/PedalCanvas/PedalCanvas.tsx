@@ -200,13 +200,24 @@ PedalCanvasProps) {
               width={width}
               onDelete={() => setSelectedKnob(null)}
               onNameChange={(name) => {
-                console.log(name);
                 // TODO think of better solution (SETS?!?!)
                 setPedalShape({
                   ...pedalShape,
                   knobs: pedalShape.knobs.map((k) => {
                     if (k.id === selectedKnob?.id)
                       return { ...selectedKnob, name };
+                    return k;
+                  }),
+                });
+              }}
+              onSizeChange={(size) => {
+                // TODO think of better solution (SETS?!?!)
+                setSelectedKnob((k) => k && { ...k, size });
+                setPedalShape({
+                  ...pedalShape,
+                  knobs: pedalShape.knobs.map((k) => {
+                    if (k.id === selectedKnob?.id)
+                      return { ...selectedKnob, size };
                     return k;
                   }),
                 });

@@ -1,6 +1,6 @@
 import * as React from "react";
 import type { Knob } from "@prisma/client";
-import { Form } from "@remix-run/react";
+import { Form, useSubmit } from "@remix-run/react";
 import Input from "../Form/Input";
 import Button from "../Form/Button";
 import SliderToggle from "../Form/Slider/SliderToggle";
@@ -11,6 +11,7 @@ interface KnobOverlayProps {
   width: number;
   onDelete?: () => void;
   onNameChange?: (name: string) => void;
+  onSizeChange: (size: number) => void;
 }
 
 export default function KnobOverlay({
@@ -18,8 +19,13 @@ export default function KnobOverlay({
   width,
   onDelete,
   onNameChange,
+  onSizeChange,
 }: KnobOverlayProps) {
   const { name, id, size } = knob;
+
+  const submit = useSubmit();
+
+  const updateKnobGeneralButtonRef = React.useRef<HTMLButtonElement>(null);
 
   return (
     <div
@@ -36,21 +42,25 @@ export default function KnobOverlay({
         />
         {/* <Button>update</Button> */}
         <input readOnly hidden type="text" name="size" value={size} />
-        {/* <SliderToggle value={size} label="size">
-              <Slider
-                value={size}
-                min={20}
-                max={120}
-                onChange={(val) =>
-                  // update local pedal shape state
-                  setPedalShape(
-                    (ps) => ps && { ...ps, size: { ...ps?.size, height: val } }
-                  )
-                }
-                onAfterChange={() => submit(updatePedalSubmitButtonRef.current)}
-              />
-            </SliderToggle> */}
-        <button hidden name="_action" value="updateKnobGeneral" type="submit" />
+        <SliderToggle value={size} label="size">
+          <Slider
+            value={size}
+            min={20}
+            max={120}
+            onChange={(val) =>
+              // update local pedal shape state
+              onSizeChange(val)
+            }
+            onAfterChange={() => submit(updateKnobGeneralButtonRef.current)}
+          />
+        </SliderToggle>
+        <button
+          ref={updateKnobGeneralButtonRef}
+          hidden
+          name="_action"
+          value="updateKnobGeneral"
+          type="submit"
+        />
       </Form>
 
       <Form method="post">
