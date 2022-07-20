@@ -10,16 +10,14 @@ interface KnobOverlayProps {
   knob: Knob;
   width: number;
   onDelete?: () => void;
-  onNameChange?: (name: string) => void;
-  onSizeChange: (size: number) => void;
+  onChange?: (updatedKnob: Knob) => void;
 }
 
 export default function KnobOverlay({
   knob,
   width,
   onDelete,
-  onNameChange,
-  onSizeChange,
+  onChange,
 }: KnobOverlayProps) {
   const { name, id, size } = knob;
 
@@ -38,7 +36,7 @@ export default function KnobOverlay({
           label="Name"
           name="name"
           defaultValue={name}
-          onChange={(input) => onNameChange && onNameChange(input)}
+          onChange={(input) => onChange && onChange({ ...knob, name: input })}
         />
         {/* <Button>update</Button> */}
         <input readOnly hidden type="text" name="size" value={size} />
@@ -47,10 +45,7 @@ export default function KnobOverlay({
             value={size}
             min={20}
             max={120}
-            onChange={(val) =>
-              // update local pedal shape state
-              onSizeChange(val)
-            }
+            onChange={(val) => onChange && onChange({ ...knob, size: val })}
             onAfterChange={() => submit(updateKnobGeneralButtonRef.current)}
           />
         </SliderToggle>

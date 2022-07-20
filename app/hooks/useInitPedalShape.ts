@@ -13,7 +13,7 @@ export function useInitPedalShape(
       pedal
         ? {
             color: pedal.color,
-            knobs: pedal.knobs,
+            knobs: new Map(pedal.knobs.map((knob) => [knob.id, knob])),
             size: {
               width: pedal.width,
               height: pedal.height,

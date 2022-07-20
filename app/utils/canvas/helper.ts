@@ -27,8 +27,8 @@ export function drawPedal({
     drawPedalShape({ context, pedalShape, resolution });
 
     // draw knobs
-    pedalShape.knobs.map((knob) =>
-      drawKnobShpe({ knob, context, selectedId, resolution })
-    );
+    for (const [, knob] of pedalShape.knobs) {
+      drawKnobShpe({ knob, context, selectedId, resolution });
+    }
   }
 }

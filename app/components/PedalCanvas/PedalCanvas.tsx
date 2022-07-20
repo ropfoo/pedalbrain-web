@@ -13,7 +13,7 @@ import KnobOverlay from "./KnobOberlay";
 
 interface PedalCanvasProps {
   pedalShape: PedalShape;
-  setPedalShape: (ps: PedalShape) => void;
+  setPedalShape?: (pedalShape: PedalShape) => void;
   resolution?: number;
   width?: number;
   height?: number;
@@ -55,6 +55,17 @@ PedalCanvasProps) {
   const selectedKnobId = selectedKnob?.id;
   const canvas = canvasRef.current;
 
+  const updatePedalShapeKnobs = (newKnob: Knob) => {
+    setSelectedKnob(newKnob);
+
+    if (setPedalShape) {
+      setPedalShape({
+        ...pedalShape,
+        knobs: pedalShape.knobs.set(newKnob.id, newKnob),
+      });
+    }
+  };
+
   React.useEffect(() => {
     if (canvas && context && pedalShape) {
       drawPedal({
@@ -79,7 +90,7 @@ PedalCanvasProps) {
       const { newDragTarget, isTarget, newIsRotate } = checkKnobTarget({
         position: startPos.current,
         resolution,
-        knobs: [...pedalShape.knobs],
+        knobs: pedalShape.knobs,
         onSelect: (knob) => {
           if (inputPosXRef.current && inputPosYRef.current) {
             inputPosXRef.current.value = knob.posX.toString();
@@ -133,21 +144,22 @@ PedalCanvasProps) {
         dragTarget.current.rotation = degree;
       }
 
-      if (context && pedalShape)
+      if (context && pedalShape) {
+        const newKnobs = dragTarget.current
+          ? pedalShape.knobs.set(dragTarget.current.id, dragTarget.current)
+          : pedalShape.knobs;
+
         drawPedal({
           canvas: canvasRef.current,
           context,
           pedalShape: {
             ...pedalShape,
-            // TODO use SET instead of array
-            knobs: pedalShape.knobs.map((k) => {
-              if (k.id === dragTarget.current?.id) return dragTarget.current;
-              return k;
-            }),
+            knobs: newKnobs,
           },
           resolution,
           selectedId: selectedKnob?.id,
         });
+      }
     }
   };
 
@@ -156,13 +168,9 @@ PedalCanvasProps) {
       hasChanges.current = false;
       updateSubmit(submitUpdateRef.current);
     }
-    setPedalShape({
-      ...pedalShape,
-      knobs: pedalShape.knobs.map((k) => {
-        if (k.id === selectedKnob?.id) return selectedKnob;
-        return k;
-      }),
-    });
+
+    if (selectedKnob) updatePedalShapeKnobs(selectedKnob);
+
     dragTarget.current = null;
     isRotationMode.current = false;
     isMouseDown.current = true;
@@ -199,29 +207,7 @@ PedalCanvasProps) {
               knob={selectedKnob}
               width={width}
               onDelete={() => setSelectedKnob(null)}
-              onNameChange={(name) => {
-                // TODO think of better solution (SETS?!?!)
-                setPedalShape({
-                  ...pedalShape,
-                  knobs: pedalShape.knobs.map((k) => {
-                    if (k.id === selectedKnob?.id)
-                      return { ...selectedKnob, name };
-                    return k;
-                  }),
-                });
-              }}
-              onSizeChange={(size) => {
-                // TODO think of better solution (SETS?!?!)
-                setSelectedKnob((k) => k && { ...k, size });
-                setPedalShape({
-                  ...pedalShape,
-                  knobs: pedalShape.knobs.map((k) => {
-                    if (k.id === selectedKnob?.id)
-                      return { ...selectedKnob, size };
-                    return k;
-                  }),
-                });
-              }}
+              onChange={(updatedKnob) => updatePedalShapeKnobs(updatedKnob)}
             />
           </motion.div>
         )}

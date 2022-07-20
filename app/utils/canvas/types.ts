@@ -20,7 +20,7 @@ export type Box = {
 export type PedalShape = {
   color: string;
   size: Size;
-  knobs: Knob[];
+  knobs: Map<string, Knob>;
 };
 
 export type KnobShape = {

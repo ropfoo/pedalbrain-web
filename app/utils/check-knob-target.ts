@@ -4,7 +4,7 @@ import type { Position } from "./canvas/types";
 
 type CheckKnobTargetParams = {
   position: Position;
-  knobs: Knob[];
+  knobs: Map<string, Knob>;
   resolution: number;
   onSelect?: (knob: Knob) => void;
   onDeselect?: () => void;
@@ -24,9 +24,8 @@ export function checkKnobTarget({
   let newIsRotate = false;
   let isTarget = false;
 
-  for (let i = 0; i < knobs.length; i++) {
-    const arKnob = knobs[i];
-    const knob = { ...arKnob };
+  for (const [, arrKnob] of knobs) {
+    const knob = { ...arrKnob };
     const rotationArea = getRotationArea({ knob, resolution });
     const dragArea = getDragArea({ knob, resolution });
 

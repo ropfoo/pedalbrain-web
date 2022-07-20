@@ -12,7 +12,7 @@ export default function PedalListItem({ pedal }: PedalListItemProps) {
 
   const pedalShape: PedalShape = {
     color: pedal?.color,
-    knobs: pedal.knobs,
+    knobs: new Map(pedal.knobs.map((knob) => [knob.id, knob])),
     size: {
       width: pedal.width,
       height: pedal.height,
