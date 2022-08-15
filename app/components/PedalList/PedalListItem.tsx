@@ -21,7 +21,7 @@ export default function PedalListItem({ pedal }: PedalListItemProps) {
 
   return (
     <Link to={pedal.id} prefetch="intent">
-      <div className="flex h-[200px] items-center justify-between rounded-r-xl bg-gradient-to-l from-lightblue pr-10">
+      <div className="flex h-[200px] items-center justify-between rounded-r-xl bg-gradient-to-l from-blue/70 pr-10">
         <p className="text-lg font-bold">{pedal.name}</p>
         <PedalPreview pedalShape={pedalShape} scale={0.4} resolution={0.75} />
       </div>

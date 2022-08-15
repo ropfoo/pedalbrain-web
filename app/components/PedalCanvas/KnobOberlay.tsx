@@ -2,7 +2,6 @@ import * as React from "react";
 import type { Knob } from "@prisma/client";
 import { Form, useSubmit } from "@remix-run/react";
 import Input from "../Form/Input";
-import Button from "../Form/Button";
 import SliderToggle from "../Form/Slider/SliderToggle";
 import Slider from "../Form/Slider/Slider";
 
@@ -32,23 +31,25 @@ export default function KnobOverlay({
     >
       <Form method="post">
         <input readOnly hidden type="text" name="id" value={id} />
-        <Input
-          label="Name"
-          name="name"
-          defaultValue={name}
-          onChange={(input) => onChange && onChange({ ...knob, name: input })}
-        />
-        {/* <Button>update</Button> */}
         <input readOnly hidden type="text" name="size" value={size} />
-        <SliderToggle value={size} label="size">
-          <Slider
-            value={size}
-            min={20}
-            max={120}
-            onChange={(val) => onChange && onChange({ ...knob, size: val })}
-            onAfterChange={() => submit(updateKnobGeneralButtonRef.current)}
+        <div className="flex items-end">
+          <Input
+            label="Name"
+            name="name"
+            defaultValue={name}
+            onChange={(input) => onChange && onChange({ ...knob, name: input })}
           />
-        </SliderToggle>
+          <div className="mr-5" />
+          <SliderToggle value={size} label="size">
+            <Slider
+              value={size}
+              min={20}
+              max={120}
+              onChange={(val) => onChange && onChange({ ...knob, size: val })}
+              onAfterChange={() => submit(updateKnobGeneralButtonRef.current)}
+            />
+          </SliderToggle>
+        </div>
         <button
           ref={updateKnobGeneralButtonRef}
           hidden
