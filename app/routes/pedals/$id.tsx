@@ -23,8 +23,9 @@ import {
   updateKnobGeneralSchema,
   updateKnobPositionSchema,
 } from "~/utils/zod/schema/knob-schema";
-import Button from "~/components/Form/Button";
 import { deletePedalSchema } from "~/utils/zod/schema/pedal-schema";
+import { ContextMenu, ContextMenuItem } from "~/components/ContextMenu";
+import { DeletePedalDialog } from "~/features/PedalDialogues";
 
 export type LoaderData = {
   pedal: EditorPedal;
@@ -113,6 +114,8 @@ export default function PedalRoute() {
 
   const updatePedalSubmitButtonRef = React.useRef<HTMLButtonElement>(null);
 
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+
   if (!pedal) return <p>no pedal</p>;
 
   return (
@@ -120,12 +123,22 @@ export default function PedalRoute() {
       <div className="flex flex-col">
         <H1>{pedal.name}</H1>
 
-        <Form method="post">
-          <input readOnly hidden name="id" value={pedal.id} />
-          <Button name="_action" value="deletePedal" type="submit">
-            delete
-          </Button>
-        </Form>
+        <ContextMenu>
+          <ContextMenuItem>
+            <p className="font-bold">rename</p>
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => setShowDeleteDialog(true)}>
+            <p className="font-bold text-pink">delete pedal</p>
+          </ContextMenuItem>
+        </ContextMenu>
+
+        <div className="mt-4" />
+
+        <DeletePedalDialog
+          isOpen={showDeleteDialog}
+          close={() => setShowDeleteDialog(false)}
+          pedal={pedal}
+        />
 
         <Form method="post">
           <input readOnly hidden type="text" name="id" value={pedal.id} />

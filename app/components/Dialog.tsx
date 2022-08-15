@@ -65,11 +65,11 @@ function ModalDialog(props: DialogWrapperProps) {
   );
 }
 
-interface DialogProps {
+export interface DialogProps {
   title?: string;
   isOpen: boolean;
   close: () => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export default function Dialog({
