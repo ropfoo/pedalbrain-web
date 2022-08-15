@@ -1,9 +1,9 @@
 import * as React from "react";
 
 import clsx from "clsx";
-import { z } from "zod";
-import { useValdation } from "./Validation";
 import { useTransition } from "@remix-run/react";
+// import { z } from "zod";
+// import { useValdation } from "./Validation";
 
 interface InputProps {
   label: string;
@@ -27,7 +27,7 @@ export default function Input({
   const [value, setValue] = React.useState(defaultValue);
   const { state } = useTransition();
 
-  const { checkError } = useValdation();
+  //   const { checkError } = useValdation();
 
   const [inputError, setInputError] = React.useState<InputError | null>();
 
@@ -35,7 +35,7 @@ export default function Input({
     setValue(event.target.value);
     setInputError(null);
     if (onChange) onChange(event.target.value);
-    const test = checkError(name, event.target.value);
+    // const test = checkError(name, event.target.value);
   };
 
   const errorMessages = error?.errorMessages;

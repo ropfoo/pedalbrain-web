@@ -8,7 +8,6 @@ import type {
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import type { RouteMatch } from "@remix-run/react";
 import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import {
   deleteKnob,
@@ -91,13 +90,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   return true;
-};
-
-export const handle = {
-  breadcrumb: (match: RouteMatch) => {
-    const { pedal } = match.data as LoaderData;
-    return <Link to={match.pathname}>{pedal?.name}</Link>;
-  },
 };
 
 export default function PedalRoute() {

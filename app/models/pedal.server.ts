@@ -26,3 +26,9 @@ export async function updatePedal({
 }) {
   return prisma.pedal.update({ where: { id }, data: { width, height } });
 }
+
+export async function createPedal({ name }: { name: string }) {
+  return prisma.pedal.create({
+    data: { name, color: "orange", width: 300, height: 400 },
+  });
+}
