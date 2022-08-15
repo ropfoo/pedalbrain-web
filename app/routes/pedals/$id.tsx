@@ -1,12 +1,12 @@
 import * as React from "react";
-import { getPedal, updatePedal } from "~/models/pedal.server";
+import { deletePedal, getPedal, updatePedal } from "~/models/pedal.server";
 import type { EditorPedal } from "~/models/pedal.server";
 import type {
   LoaderFunction,
   ActionFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import {
@@ -23,6 +23,8 @@ import {
   updateKnobGeneralSchema,
   updateKnobPositionSchema,
 } from "~/utils/zod/schema/knob-schema";
+import Button from "~/components/Form/Button";
+import { deletePedalSchema } from "~/utils/zod/schema/pedal-schema";
 
 export type LoaderData = {
   pedal: EditorPedal;
@@ -59,6 +61,16 @@ export const action: ActionFunction = async ({ request, params }) => {
 
     if (pedalId && width && height) {
       await updatePedal({ id: pedalId, width, height });
+    }
+  }
+
+  if (actionType === "deletePedal") {
+    const validatedSchema = deletePedalSchema.safeParse(formEntries);
+    if (!validatedSchema.success) {
+      return json(validatedSchema.error.format());
+    } else {
+      await deletePedal(validatedSchema.data);
+      return redirect("/pedals");
     }
   }
 
@@ -107,6 +119,13 @@ export default function PedalRoute() {
     <div className="flex justify-between">
       <div className="flex flex-col">
         <H1>{pedal.name}</H1>
+
+        <Form method="post">
+          <input hidden name="id" value={pedal.id} />
+          <Button name="_action" value="deletePedal" type="submit">
+            delete
+          </Button>
+        </Form>
 
         <Form method="post">
           <input readOnly hidden type="text" name="id" value={pedal.id} />

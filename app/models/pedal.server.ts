@@ -32,3 +32,7 @@ export async function createPedal({ name }: { name: string }) {
     data: { name, color: "orange", width: 300, height: 400 },
   });
 }
+
+export async function deletePedal({ id }: { id: string }) {
+  return prisma.pedal.delete({ where: { id } });
+}
