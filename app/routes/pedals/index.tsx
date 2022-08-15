@@ -10,7 +10,7 @@ import { getPedals } from "~/models/pedal.server";
 import Input from "~/components/Form/Input";
 import Button from "~/components/Form/Button";
 import { createPedalSchema } from "~/utils/zod/schema/pedal-schema";
-import Dialog from "~/components/Dialog/Dialog";
+import Dialog from "~/components/Dialog";
 
 type LoaderData = {
   pedals: EditorPedal[];
