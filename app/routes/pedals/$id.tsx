@@ -121,7 +121,7 @@ export default function PedalRoute() {
         <H1>{pedal.name}</H1>
 
         <Form method="post">
-          <input hidden name="id" value={pedal.id} />
+          <input readOnly hidden name="id" value={pedal.id} />
           <Button name="_action" value="deletePedal" type="submit">
             delete
           </Button>
