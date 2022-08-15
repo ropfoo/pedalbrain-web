@@ -1,4 +1,4 @@
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/server-runtime";
 import type { LoaderFunction } from "@remix-run/server-runtime";
@@ -39,11 +39,18 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function PedalsRoute() {
   const { pedals } = useLoaderData<LoaderData>();
+  const actionData = useActionData();
 
   return (
     <div>
       <Form method="post">
-        <Input label="Name" name="name" />
+        <Input
+          label="Name"
+          name="name"
+          error={
+            actionData?.name && { errorMessages: actionData?.name?._errors }
+          }
+        />
         <Button name="_action" value="createPedal" type="submit">
           create new
         </Button>
