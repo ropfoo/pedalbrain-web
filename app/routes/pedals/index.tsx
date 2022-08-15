@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import type { ActionFunction } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/server-runtime";
@@ -9,6 +10,7 @@ import { getPedals } from "~/models/pedal.server";
 import Input from "~/components/Form/Input";
 import Button from "~/components/Form/Button";
 import { createPedalSchema } from "~/utils/zod/schema/pedal-schema";
+import Dialog from "~/components/Dialog/Dialog";
 
 type LoaderData = {
   pedals: EditorPedal[];
@@ -41,20 +43,31 @@ export default function PedalsRoute() {
   const { pedals } = useLoaderData<LoaderData>();
   const actionData = useActionData();
 
+  const [showCreateDialog, setShowCreateDialog] = React.useState(false);
+
   return (
     <div>
-      <Form method="post">
-        <Input
-          label="Name"
-          name="name"
-          error={
-            actionData?.name && { errorMessages: actionData?.name?._errors }
-          }
-        />
-        <Button name="_action" value="createPedal" type="submit">
-          create new
-        </Button>
-      </Form>
+      <Dialog
+        isOpen={showCreateDialog}
+        close={() => setShowCreateDialog(false)}
+      >
+        <Form method="post">
+          <Input
+            label="Name"
+            name="name"
+            error={
+              actionData?.name && { errorMessages: actionData?.name?._errors }
+            }
+          />
+          <Button name="_action" value="createPedal" type="submit">
+            create
+          </Button>
+        </Form>
+      </Dialog>
+      <Button onClick={() => setShowCreateDialog(true)}>
+        Create New Pedal
+      </Button>
+      <div className="mt-4" />
       <PedalList pedals={pedals} />
     </div>
   );
