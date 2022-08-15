@@ -74,7 +74,7 @@ export default function NewKnobRoute() {
         <SliderToggle value={80} label="size">
           <Slider value={80} min={10} max={100} onChange={(val) => null} />
         </SliderToggle>
-        <Button>add knob</Button>
+        <Button type="submit">add knob</Button>
         {/* </Validation> */}
       </Form>
     </div>
