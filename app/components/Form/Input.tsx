@@ -51,7 +51,7 @@ export default function Input({
   React.useEffect(() => setValue(defaultValue), [defaultValue]);
 
   return (
-    <div className="mb-3">
+    <div>
       <label htmlFor={name}>
         <p className=" font-bold text-lightblue">{label}</p>
       </label>
@@ -62,7 +62,7 @@ export default function Input({
         onChange={handleChange}
         defaultValue={defaultValue}
         type="text"
-        className={clsx("rounded-md border-2 bg-black py-1 px-2 text-white", {
+        className={clsx("rounded-md border-2 bg-black py-2 px-2 text-white", {
           "border-pink": inputError,
           "border-lightblue": !inputError,
         })}
