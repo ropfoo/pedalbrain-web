@@ -39,7 +39,7 @@ export function ContextMenu({ children }: ContextMenuProps) {
         </button>
         <div
           className={clsx(
-            "absolute bottom-[-45px] z-10 flex h-10 w-[200px] flex-col justify-center rounded-md border-2  bg-darkblue transition-all duration-200 ease-in-out",
+            "absolute top-12 z-10 flex w-[200px] flex-col justify-center rounded-md border-2  bg-darkblue transition-all duration-200 ease-in-out",
             {
               "pointer-events-none -translate-y-3 border-darkblue opacity-0":
                 !isOpen,
@@ -67,5 +67,12 @@ export function ContextMenuItem({ onClick, children }: ContextMenuItemProps) {
     if (onClick) onClick();
   };
 
-  return <button onClick={handleClick}>{children}</button>;
+  return (
+    <button
+      className="h-10 transition-colors hover:bg-blue"
+      onClick={handleClick}
+    >
+      {children}
+    </button>
+  );
 }
