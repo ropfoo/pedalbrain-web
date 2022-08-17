@@ -15,7 +15,7 @@ export async function getPedals() {
   });
 }
 
-export async function updatePedal({
+export async function updatePedalSize({
   id,
   width,
   height,
@@ -25,6 +25,16 @@ export async function updatePedal({
   height: number;
 }) {
   return prisma.pedal.update({ where: { id }, data: { width, height } });
+}
+
+export async function updatePedalName({
+  id,
+  name,
+}: {
+  id: string;
+  name: string;
+}) {
+  return prisma.pedal.update({ where: { id }, data: { name } });
 }
 
 export async function createPedal({ name }: { name: string }) {
