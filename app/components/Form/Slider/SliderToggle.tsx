@@ -34,7 +34,7 @@ export default function SliderToggle({
       </button>
       <div
         className={clsx(
-          "absolute bottom-[-45px] z-10 flex h-10 w-[200px] flex-col justify-center rounded-md border-2  bg-darkblue transition-all duration-200 ease-in-out",
+          "absolute top-12 z-10 flex h-10 w-[200px] flex-col justify-center rounded-md border-2  bg-darkblue transition-all duration-200 ease-in-out",
           {
             "pointer-events-none -translate-y-3 border-darkblue opacity-0":
               !isOpen,

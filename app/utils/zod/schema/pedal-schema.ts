@@ -7,3 +7,8 @@ export const createPedalSchema = z.object({
 export const deletePedalSchema = z.object({
   id: z.string().min(1),
 });
+
+export const updatePedalNameSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1, { message: "Type in a pedal name" }),
+});

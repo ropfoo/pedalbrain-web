@@ -1,5 +1,10 @@
 import * as React from "react";
-import { deletePedal, getPedal, updatePedal } from "~/models/pedal.server";
+import {
+  deletePedal,
+  getPedal,
+  updatePedalSize,
+  updatePedalName,
+} from "~/models/pedal.server";
 import type { EditorPedal } from "~/models/pedal.server";
 import type {
   LoaderFunction,
@@ -23,9 +28,15 @@ import {
   updateKnobGeneralSchema,
   updateKnobPositionSchema,
 } from "~/utils/zod/schema/knob-schema";
-import { deletePedalSchema } from "~/utils/zod/schema/pedal-schema";
+import {
+  deletePedalSchema,
+  updatePedalNameSchema,
+} from "~/utils/zod/schema/pedal-schema";
 import { ContextMenu, ContextMenuItem } from "~/components/ContextMenu";
-import { DeletePedalDialog } from "~/features/PedalDialogues";
+import {
+  DeletePedalDialog,
+  UpdatePedalNameDialog,
+} from "~/features/PedalDialogues";
 
 export type LoaderData = {
   pedal: EditorPedal;
@@ -61,7 +72,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     const height = Number(formData.get("height"));
 
     if (pedalId && width && height) {
-      await updatePedal({ id: pedalId, width, height });
+      await updatePedalSize({ id: pedalId, width, height });
     }
   }
 
@@ -72,6 +83,16 @@ export const action: ActionFunction = async ({ request, params }) => {
     } else {
       await deletePedal(validatedSchema.data);
       return redirect("/pedals");
+    }
+  }
+
+  if (actionType === "updatePedalName") {
+    const validatedSchema = updatePedalNameSchema.safeParse(formEntries);
+    if (!validatedSchema.success) {
+      return json(validatedSchema.error.format());
+    } else {
+      const updatedPedal = await updatePedalName(validatedSchema.data);
+      return updatedPedal;
     }
   }
 
@@ -115,6 +136,7 @@ export default function PedalRoute() {
   const updatePedalSubmitButtonRef = React.useRef<HTMLButtonElement>(null);
 
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const [showUpdateNameDialog, setShowUpdateNameDialog] = React.useState(false);
 
   if (!pedal) return <p>no pedal</p>;
 
@@ -124,7 +146,7 @@ export default function PedalRoute() {
         <H1>{pedal.name}</H1>
 
         <ContextMenu>
-          <ContextMenuItem>
+          <ContextMenuItem onClick={() => setShowUpdateNameDialog(true)}>
             <p className="font-bold">rename</p>
           </ContextMenuItem>
           <ContextMenuItem onClick={() => setShowDeleteDialog(true)}>
@@ -137,6 +159,12 @@ export default function PedalRoute() {
         <DeletePedalDialog
           isOpen={showDeleteDialog}
           close={() => setShowDeleteDialog(false)}
+          pedal={pedal}
+        />
+
+        <UpdatePedalNameDialog
+          isOpen={showUpdateNameDialog}
+          close={() => setShowUpdateNameDialog(false)}
           pedal={pedal}
         />
 
