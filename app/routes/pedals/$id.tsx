@@ -91,8 +91,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     if (!validatedSchema.success) {
       return json(validatedSchema.error.format());
     } else {
-      await updatePedalName(validatedSchema.data);
-      return "success";
+      const updatedPedal = await updatePedalName(validatedSchema.data);
+      return updatedPedal;
     }
   }
 

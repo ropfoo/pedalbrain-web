@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Form, useActionData, useTransition } from "@remix-run/react";
+import { Form, useFetcher } from "@remix-run/react";
 import type { DialogProps } from "~/components/Dialog";
 import Dialog from "~/components/Dialog";
 import Button from "~/components/Form/Button";
@@ -34,28 +34,29 @@ export function UpdatePedalNameDialog({
   close,
   pedal,
 }: PedalDialogProps) {
-  const actionData = useActionData();
+  const fetcher = useFetcher();
 
-  const hasError = actionData !== "success";
+  const hasNameErrors = fetcher.data?.name?._errors;
+  const hasNameInput = fetcher.submission?.formData.get("name");
 
   React.useEffect(() => {
-    if (!hasError) {
+    if (hasNameInput && !hasNameErrors) {
       close();
     }
-  }, [hasError, close]);
+  }, [close, hasNameErrors, hasNameInput]);
 
   if (!pedal) return null;
   return (
     <Dialog isOpen={isOpen} close={close}>
-      <Form method="post">
+      <fetcher.Form method="post">
         <p>Type in a new name for "{pedal.name}"</p>
         <div className="mb-5" />
         <Input
           label="New Name"
           name="name"
           error={
-            actionData?.name && {
-              errorMessages: actionData?.name?._errors,
+            fetcher.data?.name && {
+              errorMessages: fetcher.data?.name?._errors,
             }
           }
         />
@@ -67,7 +68,7 @@ export function UpdatePedalNameDialog({
             confirm
           </Button>
         </div>
-      </Form>
+      </fetcher.Form>
     </Dialog>
   );
 }
