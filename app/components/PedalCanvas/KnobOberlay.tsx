@@ -26,7 +26,7 @@ export default function KnobOverlay({
 
   return (
     <div
-      className="absolute bottom-0 rounded-xl bg-blue p-6 drop-shadow-lg"
+      className="absolute bottom-0 rounded-xl border-2 border-blue bg-black p-6 drop-shadow-lg"
       style={{ width }}
     >
       <Form method="post">
